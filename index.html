@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="style.css">
+    <title>IMAGINE</title>
+</head>
+
+
+<body>
+<div class="menumais">
+    <div class="opcoesmais" id="escanear">Escanear Dispositivo</div>
+    <div class="opcoesmais" id="adicionar">Adicionar Manualmente</div>
+    <input type="file" id="input-arquivo" accept=".pdf,.epub" style="display: none;">
+    <button class="mais">+</button>
+</div>
+
+
+    <header class="topo-biblioteca">
+        <div class="container-menu">
+            <img class="logo" src="img/logo4.svg" alt="IMAGINE" height="35">
+            <span class="Minha">Minha</span>
+            <span class="Biblioteca">Biblioteca</span>
+        </div>
+    </header>
+
+
+<form action="#" class="formb">
+        <button type="submit" class="botaob">
+            <img class="lupa" src="img/lupa.svg" alt="buscar">
+        </button>
+        <input type="text" class="busca" placeholder="Buscar livros..."> 
+    </form>
+    
+
+    <section id="recentes">
+        <h2 class="recentes">Recentes</h2>
+        <div class="cardsR" id="todoscardsR">
+            <div class="card">
+                <div class="capa-container">
+                    <div class="info-container">
+                        <h3 class="titulo"></h3>
+                    </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+
+    <div class="linha-categorias-filtros">
+    <div class="categoriascontainer">
+        <button class="categoria-item ativo" data-categoria="todos">Todos</button>
+        <button class="categoria-item" data-categoria="lendo">Lendo</button>
+        <button class="categoria-item" data-categoria="relendo">Relendo</button>
+        <button class="categoria-item" data-categoria="quero-ler">Quero Ler</button>
+        <button class="categoria-item" data-categoria="finalizados">Finalizados</button>
+        <button class="categoria-item" data-categoria="abandonados">Abandonados</button>
+        <button class="categoria-item" data-categoria="favoritos">Favoritos</button>
+    </div>
+    <div class="acoes-direita-container">
+        <button class="btn-acao-topo btn-filtro-secao" title="Filtrar biblioteca">
+            <svg viewBox="0 0 24 24" width="20" height="20" stroke="currentColor" stroke-width="2" fill="none"><polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3"/></svg>
+        </button>
+        <button class="btn-acao-topo btn-lixeira-secao" title="Lixeira" id="btn-lixeira-secao"> 
+            <svg viewBox="0 0 24 24" width="20" height="20" stroke="currentColor" stroke-width="2" fill="none"><path d="M3 6h18M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>
+        </button>
+    </div>
+</div>
+
+
+<div class="cardsC" id="todoscardsC"></div>
+
+<div class="container-acoes-lixeira" id="container-acoes-lixeira" style="display: none;">
+    <button class="btn-selecionar-tudo" id="btn-selecionar-tudo">Selecionar Tudo</button>
+    <button class="btn-deletar-secao" id="btn-deletar-selecionados">Deletar Selecionados</button>
+</div>
+
+
+    <!-- MODAL DE EDIÇÃO DO LIVRO -->
+    <div class="modal-overlay" id="modal-edicao-livro" style="display: none;">
+        <div class="modal-conteudo">
+            <button class="btn-fechar-modal" id="btn-fechar-modal-livro">✕</button>
+            <div class="modal-esquerda">
+                <img class="modal-capa" id="modal-capa-livro" src="img/capapadrao.jpg" alt="Capa do Livro">
+            </div>
+            <div class="modal-direita">
+                <div class="modal-campo">
+                    <label>Título do Livro</label>
+                    <input type="text" id="modal-input-titulo" placeholder="Digite o título...">
+                </div>
+                <div class="modal-campo">
+                    <label>Autor</label>
+                    <input type="text" id="modal-input-autor" placeholder="Digite o autor...">
+                </div>
+                <button class="btn-salvar-modal" id="btn-salvar-modal-livro">Salvar</button>
+            </div>
+        </div>
+    </div>
+
+
+    <nav class="aba-inferior">
+        <a href="index.html" class="aba-item ativo"><span>Início</span></a>
+        <a href="Explorar.html" class="aba-item"><span>Explorar</span></a>
+        <a href="Moedas.html" class="aba-item"><span>Moedas</span></a>
+        <a href="Perfil.html" class="aba-item"><span>Perfil</span></a>
+    </nav>
+
+    <script src="script.js"></script>
+</body>
+</html>

@@ -1,0 +1,177 @@
+/* PERFIL */
+.secao-perfil {
+    padding: 20px 15px;
+    background-color: #f9f9fb;
+    min-height: calc(100vh - 60px);
+}
+
+.cabecalho-perfil {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    margin-bottom: 25px;
+    background-color: white;
+    padding: 15px;
+    border-radius: 12px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+}
+
+.avatar-usuario {
+    font-size: 40px;
+    background-color: #eef1ff;
+    width: 60px;
+    height: 60px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border-radius: 50%;
+}
+
+.nome-usuario {
+    font-family: 'roboto-black', sans-serif;
+    color: #09092d;
+    font-size: 18px;
+    margin: 0;
+}
+
+.nivel-usuario {
+    font-size: 13px;
+    color: #777777;
+    margin: 3px 0 0 0;
+}
+
+.grade-estatisticas {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 10px;
+    margin-bottom: 25px;
+}
+
+.card-estatistica {
+    background-color: white;
+    padding: 15px 10px;
+    border-radius: 10px;
+    text-align: center;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+}
+
+.num-estatistica {
+    font-family: 'roboto-black', sans-serif;
+    font-size: 22px;
+    color: #2838a3;
+}
+
+.rotulo-estatistica {
+    font-size: 11px;
+    color: #888888;
+    font-weight: 500;
+}
+
+.painel-desafio {
+    background-color: white;
+    padding: 20px;
+    border-radius: 12px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+    font-family: 'roboto-medium', sans-serif;
+}
+
+.titulo-desafio {
+    font-family: 'roboto-black', sans-serif;
+    color: #09092d;
+    font-size: 15px;
+    margin: 0 0 10px 0;
+}
+
+.descricao-desafio {
+    font-size: 13px;
+    color: #444444;
+    margin: 0 0 15px 0;
+}
+
+.progresso-desafio-fundo {
+    height: 10px;
+    background-color: #eeeeee;
+    border-radius: 5px;
+    overflow: hidden;
+    margin-bottom: 8px;
+}
+
+.progresso-desafio-barra {
+    height: 100%;
+    background-color: #e67e22;
+    border-radius: 5px;
+}
+
+.porcentagem-desafio {
+    font-size: 11px;
+    color: #777777;
+    font-weight: bold;
+}
+
+.lista-opcoes-perfil {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    margin-top: 10px;
+}
+
+.item-opcao {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background-color: white;
+    padding: 16px;
+    border-radius: 12px;
+    text-decoration: none;
+    color: #09092d;
+    font-family: 'roboto-medium', sans-serif;
+    font-size: 14px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+    transition: background-color 0.2s ease, transform 0.1s ease;
+}
+
+.item-opcao:hover { background-color: #f5f5f5; }
+.item-opcao:active { transform: scale(0.98); }
+.opcao-esquerda { display: flex; align-items: center; gap: 12px; }
+.icone-opcao { font-size: 18px; }
+.seta-opcao { color: #2838a3; font-size: 14px; }
+
+
+
+
+/* ==========================================================================
+   BARRA DE NAVEGAÇÃO INFERIOR COLETIVA
+   ========================================================================== */
+.aba-inferior {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    height: 20px;
+    background-color: #09092d;
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+    z-index: 2000;
+    padding: 5px 0;
+    box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.15);
+    font-family: 'roboto-black', sans-serif;
+    color: #cccccc;
+}
+.aba-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    cursor: pointer;
+    font-family: 'roboto-black', sans-serif;
+    font-size: 10px;
+    color: #5d5d6e;
+    text-decoration: none;
+}
+.aba-item.ativo {
+    color: #cccccc;
+    font-weight: bold;
+}
