@@ -1,4 +1,16 @@
+// ==========================================================================
+// 0. INICIALIZAÇÃO DO BANCO DE DADOS INDEXEDDB (Para arquivos pesados PDF/EPUB)
+// ==========================================================================
+const pedidoDB = indexedDB.open("BibliotecaArquivos", 1);
+pedidoDB.onupgradeneeded = (e) => {
+    const db = e.target.result;
+    if (!db.objectStoreNames.contains("arquivos")) {
+        db.createObjectStore("arquivos");
+    }
+};
+
 document.addEventListener('DOMContentLoaded', () => {
+
     // ==========================================================================
     // 1. INICIALIZAÇÃO DE DADOS
     // ==========================================================================
@@ -44,9 +56,10 @@ document.addEventListener('DOMContentLoaded', () => {
 
         const termoMin = termoBusca.toLowerCase().trim();
 
-        // CORREÇÃO CRÍTICA: Definindo a variável livrosFiltrados antes de usá-la!
+        // Filtro aceita a propriedade favorita cumulativa/independente
         const livrosFiltrados = meusLivros.filter(livro => {
-            const correspondeCategoria = categoriaFiltro === 'todos' || livro.categoria === categoriaFiltro;
+            const correspondeCategoria = categoriaFiltro === 'todos' || 
+                                         (categoriaFiltro === 'favoritos' ? livro.favorito === true : livro.categoria === categoriaFiltro);
             const correspondeBusca = livro.titulo.toLowerCase().includes(termoMin) || 
                                      (livro.autor && livro.autor.toLowerCase().includes(termoMin));
             return correspondeCategoria && correspondeBusca;
@@ -77,23 +90,39 @@ document.addEventListener('DOMContentLoaded', () => {
             });
         }
         
-        // 2. Renderiza os Livros na Grade Principal (Todos Filtrados)
+        // 2. Renderiza os Livros na Grade Principal (Todos Filtrados com Ícones SVG)
         livrosFiltrados.forEach(livro => {
             const card = document.createElement('div');
             card.className = `card card-livro-individual ${livrosSelecionados.includes(livro.id) ? 'card-selecionado-exclusao' : ''}`;
             card.dataset.id = livro.id;
 
-            // Correção de sintaxe: Fechando corretamente as aspas do alt="Capa do Livro"
             card.innerHTML = `
                 <div class="capa-container">
                     <img class="capa-livro" src="${livro.capa || 'img/capapadrao.jpg'}" alt="Capa do Livro" loading="lazy">
                     <div class="menu-categorias-capa">
-                        <button class="btn-cat cat-lendo ${livro.categoria === 'lendo' ? 'selecionado' : ''}" title="Lendo" data-cat="lendo">L</button>
-                        <button class="btn-cat cat-relendo ${livro.categoria === 'relendo' ? 'selecionado' : ''}" title="Relendo" data-cat="relendo">R</button>
-                        <button class="btn-cat cat-quero-ler ${livro.categoria === 'quero-ler' ? 'selecionado' : ''}" title="Quero Ler" data-cat="quero-ler">Q</button>
-                        <button class="btn-cat cat-finalizados ${livro.categoria === 'finalizados' ? 'selecionado' : ''}" title="Finalizados" data-cat="finalizados">F</button>
-                        <button class="btn-cat cat-abandonados ${livro.categoria === 'abandonados' ? 'selecionado' : ''}" title="Abandonados" data-cat="abandonados">A</button>
-                        <button class="btn-cat cat-favoritos ${livro.categoria === 'favoritos' ? 'selecionado' : ''}" title="Favoritos" data-cat="favoritos">★</button>
+                        <button class="btn-cat cat-lendo ${livro.categoria === 'lendo' ? 'selecionado' : ''}" title="Lendo" data-cat="lendo">
+                            <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"></path><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"></path></svg>
+                        </button>
+                        
+                        <button class="btn-cat cat-relendo ${livro.categoria === 'relendo' ? 'selecionado' : ''}" title="Relendo" data-cat="relendo">
+                            <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 4 23 10 17 10"></polyline><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"></path></svg>
+                        </button>
+                        
+                        <button class="btn-cat cat-quero-ler ${livro.categoria === 'quero-ler' ? 'selecionado' : ''}" title="Quero Ler" data-cat="quero-ler">
+                            <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"></path></svg>
+                        </button>
+                        
+                        <button class="btn-cat cat-finalizados ${livro.categoria === 'finalizados' ? 'selecionado' : ''}" title="Finalizados" data-cat="finalizados">
+                            <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>
+                        </button>
+                        
+                        <button class="btn-cat cat-abandonados ${livro.categoria === 'abandonados' ? 'selecionado' : ''}" title="Abandonados" data-cat="abandonados">
+                            <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+                        </button>
+                        
+                        <button class="btn-cat cat-favoritos ${livro.favorito ? 'selecionado' : ''}" title="Favoritos" data-cat="favoritos">
+                            <svg viewBox="0 0 24 24" width="14" height="14" fill="currentColor"><path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"/></svg>
+                        </button>
                     </div>
                 </div>
                 <div class="card-info">
@@ -102,9 +131,9 @@ document.addEventListener('DOMContentLoaded', () => {
                 </div>
             `;
 
-            // Clique no card (abre edição ou seleciona para exclusão)
+            // Clique no card (Abre edição ou seleciona para exclusão)
             card.addEventListener('click', (e) => {
-                if (e.target.classList.contains('btn-cat')) return;
+                if (e.target.closest('.btn-cat')) return;
 
                 if (modoExclusaoAtivo) {
                     toggleSelecaoLivro(livro.id, card);
@@ -119,7 +148,13 @@ document.addEventListener('DOMContentLoaded', () => {
                 btn.addEventListener('click', (e) => {
                     e.stopPropagation();
                     const novaCat = btn.dataset.cat;
-                    livro.categoria = livro.categoria === novaCat ? 'todos' : novaCat;
+                    
+                    if (novaCat === 'favoritos') {
+                        livro.favorito = !livro.favorito;
+                    } else {
+                        livro.categoria = livro.categoria === novaCat ? 'todos' : novaCat;
+                    }
+                    
                     salvarDados();
                     const catAtiva = document.querySelector('.categoria-item.ativo')?.dataset.categoria || 'todos';
                     renderizarBiblioteca(catAtiva, buscaInput ? buscaInput.value : '');
@@ -135,17 +170,19 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     // ==========================================================================
-    // 4. CRIAR NOVO LIVRO
+    // 4. CRIAR NOVO LIVRO (Modificado para sincronizar com IndexedDB)
     // ==========================================================================
-    window.criarNovoCardNoApp = function(titulo, formato) {
+    window.criarNovoCardNoApp = function(titulo, formato, idNovo) {
         const novoLivro = {
-            id: Date.now().toString(),
+            id: idNovo, // Recebe o ID único gerado no evento de upload
             titulo: titulo,
             autor: '',
             formato: formato,
             categoria: 'todos',
             capa: 'img/capapadrao.jpg',
-            lidoRecentemente: false
+            lidoRecentemente: false,
+            favorito: false
+            // O conteúdo textual bruto não é mais salvo aqui para economizar o localStorage
         };
 
         meusLivros.push(novoLivro);
@@ -156,7 +193,7 @@ document.addEventListener('DOMContentLoaded', () => {
     };
 
     // ==========================================================================
-    // 5. CONTROLE DO MENU FLUTUANTE BOTÃO (+)
+    // 5. CONTROLE DO MENU FLUTUANTE BOTÃO (+) E LEITURA DE ARQUIVO (IndexedDB)
     // ==========================================================================
     if (btnMais) {
         btnMais.addEventListener('click', (evento) => {
@@ -188,7 +225,24 @@ document.addEventListener('DOMContentLoaded', () => {
                 const extensao = partes.pop().toLowerCase();
                 const tituloDoLivro = partes.join('.'); 
 
-                window.criarNovoCardNoApp(tituloDoLivro, extensao);
+                // Cria o ID único que vai ligar o item do LocalStorage ao arquivo do IndexedDB
+                const idNovo = Date.now().toString(); 
+
+                // Abre o banco IndexedDB e guarda o arquivo binário bruto (Blob) do PDF/EPUB
+                const req = indexedDB.open("BibliotecaArquivos", 1);
+                req.onsuccess = (e) => {
+                    const db = e.target.result;
+                    const tx = db.transaction("arquivos", "readwrite");
+                    const store = tx.objectStore("arquivos");
+                    
+                    store.put(arquivoSelecionado, idNovo); // Salva o arquivo inteiro de forma segura
+                    
+                    tx.oncomplete = () => {
+                        // Só cria o card visual na tela após o arquivo terminar de ser salvo
+                        window.criarNovoCardNoApp(tituloDoLivro, extensao, idNovo);
+                    };
+                };
+                
                 inputArquivo.value = '';
             }
         });
@@ -216,7 +270,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     // ==========================================================================
-    // 7. MODO DE EXCLUSÃO (ATUALIZADO COM SELECIONAR TUDO)
+    // 7. MODO DE EXCLUSÃO (Modificado para limpar também o IndexedDB)
     // ==========================================================================
     const containerAcoesLixeira = document.getElementById('container-acoes-lixeira');
     const btnSelecionarTudo = document.getElementById('btn-selecionar-tudo');
@@ -248,7 +302,8 @@ document.addEventListener('DOMContentLoaded', () => {
             const termoBusca = buscaInput ? buscaInput.value.toLowerCase() : '';
             
             const livrosVisiveis = meusLivros.filter(livro => {
-                const correspondeCategoria = catAtiva === 'todos' || livro.categoria === catAtiva;
+                const correspondeCategoria = catAtiva === 'todos' || 
+                                             (catAtiva === 'favoritos' ? livro.favorito === true : livro.categoria === catAtiva);
                 const correspondeBusca = livro.titulo.toLowerCase().includes(termoBusca) || 
                                          (livro.autor && livro.autor.toLowerCase().includes(termoBusca));
                 return correspondeCategoria && correspondeBusca;
@@ -288,8 +343,11 @@ document.addEventListener('DOMContentLoaded', () => {
         if (btnSelecionarTudo) {
             const catAtiva = document.querySelector('.categoria-item.ativo')?.dataset.categoria || 'todos';
             const termoBusca = buscaInput ? buscaInput.value.toLowerCase() : '';
+            
             const livrosVisiveis = meusLivros.filter(l => {
-                return (catAtiva === 'todos' || l.categoria === catAtiva) && 
+                const correspondeCategoria = catAtiva === 'todos' || 
+                                             (catAtiva === 'favoritos' ? l.favorito === true : l.categoria === catAtiva);
+                return correspondeCategoria && 
                        (l.titulo.toLowerCase().includes(termoBusca) || (l.autor && l.autor.toLowerCase().includes(termoBusca)));
             });
             
@@ -303,30 +361,47 @@ document.addEventListener('DOMContentLoaded', () => {
             if (livrosSelecionados.length === 0) return;
 
             if (confirm(`Deseja mesmo remover os ${livrosSelecionados.length} livros selecionados?`)) {
-                meusLivros = meusLivros.filter(livro => !livrosSelecionados.includes(livro.id));
-                salvarDados();
                 
-                livrosSelecionados = [];
-                modoExclusaoAtivo = false;
-                
-                if (containerAcoesLixeira) containerAcoesLixeira.style.display = 'none';
-                if (btnLixeiraSecao) {
-                    btnLixeiraSecao.style.backgroundColor = 'transparent';
-                    btnLixeiraSecao.style.color = '#09092d';
-                }
+                // Abre o IndexedDB para apagar também os arquivos reais pesados associados
+                const req = indexedDB.open("BibliotecaArquivos", 1);
+                req.onsuccess = (e) => {
+                    const db = e.target.result;
+                    const tx = db.transaction("arquivos", "readwrite");
+                    const store = tx.objectStore("arquivos");
+                    
+                    // Remove cada arquivo do IndexedDB
+                    livrosSelecionados.forEach(id => {
+                        store.delete(id);
+                    });
+                    
+                    tx.oncomplete = () => {
+                        // Só limpa o LocalStorage e atualiza a interface após apagar do IndexedDB
+                        meusLivros = meusLivros.filter(livro => !livrosSelecionados.includes(livro.id));
+                        salvarDados();
+                        
+                        livrosSelecionados = [];
+                        modoExclusaoAtivo = false;
+                        
+                        if (containerAcoesLixeira) containerAcoesLixeira.style.display = 'none';
+                        if (btnLixeiraSecao) {
+                            btnLixeiraSecao.style.backgroundColor = 'transparent';
+                            btnLixeiraSecao.style.color = '#09092d';
+                        }
 
-                const catAtiva = document.querySelector('.categoria-item.ativo')?.dataset.categoria || 'todos';
-                renderizarBiblioteca(catAtiva, buscaInput ? buscaInput.value : '');
+                        const catAtiva = document.querySelector('.categoria-item.ativo')?.dataset.categoria || 'todos';
+                        renderizarBiblioteca(catAtiva, buscaInput ? buscaInput.value : '');
+                    };
+                };
             }
         });
     }
 
     // ==========================================================================
-    // 8. CONTROLE DO MODAL DE EDIÇÃO
+    // 8. CONTROLE DO MODAL DE EDIÇÃO E DIREÇÃO PARA LEITURA
     // ==========================================================================
     function abrirModalEdicao(livro) {
         if (!modalEdicao) return;
-        livroSendoEditadoId = livro.id;
+        livroSendoEditadoId = livro.id; 
         modalInputTitulo.value = livro.titulo;
         modalInputAutor.value = livro.autor || '';
         modalCapaImg.src = livro.capa || 'img/capapadrao.jpg';
@@ -340,6 +415,17 @@ document.addEventListener('DOMContentLoaded', () => {
         }
 
         modalEdicao.style.display = 'flex';
+    }
+
+    // Ao clicar na capa dentro do modal, abre a página de leitura passando o id do livro
+    if (modalCapaImg) {
+        modalCapaImg.style.cursor = 'pointer';
+        modalCapaImg.title = 'Clique na capa para abrir o leitor';
+        modalCapaImg.addEventListener('click', () => {
+            if (livroSendoEditadoId) {
+                window.location.href = `leitor.html?id=${livroSendoEditadoId}`;
+            }
+        });
     }
 
     if (btnFecharModalEdicao && modalEdicao) {

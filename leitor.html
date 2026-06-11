@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="leitor.css">
+    <title>Leitor</title>
+</head>
+<body>
+    <div class="barra-topo">
+        <button class="btn-voltar" onclick="window.location.href='index.html'">←</button>
+        <h2 id="leitor-titulo" class="titulo-livro">Carregando...</h2>
+        <div style="width: 80px;"></div>
+    </div>
+
+    <div id="conteudo-livro" class="area-texto">
+        A processar o arquivo, favor aguarde...
+    </div>
+
+    <!-- Dependências do EPUB -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.1.5/jszip.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/epubjs/dist/epub.min.js"></script>
+    <script src="leitor.js"></script>
+</body>
+</html>

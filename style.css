@@ -52,6 +52,7 @@ body {
     border: none;
     position: center;
     gap: 0.1px;
+    border-radius: 5px;
 }
 
 .busca {
@@ -60,7 +61,8 @@ body {
     background-color: #cccccc;
     border: none;
     font-size: 1rem;
-    height: 15px;
+    height: 25px;
+    border-radius: 0px 50px 50px 0px; 
 
 }
 .botaob {
@@ -68,13 +70,15 @@ body {
     border: none;
     cursor: pointer;
     padding: 0.2rem;
-    height: 17px;
+    height: 27px;
     margin-top: 0px;
+    border-radius: 50px 0px 0px 50px;
     
 }
 .lupa {
     width: 1.1rem;
     height: 1.1rem;
+    margin-left: 0.4rem;
     align-items: center;
     position: center;
     display: flex;
@@ -85,7 +89,7 @@ body {
    ========================================================================== */
 .menumais {
     position: fixed;
-    bottom: 20px;
+    bottom: 50px;
     right: 20px;
     z-index: 50000;
 }
@@ -115,13 +119,14 @@ body {
     right: 0;
     background-color: #2838a3;
     color: white;
-    padding: 8px 16px;
-    border-radius: 20px;
-    font-size: 14px;
+    padding: 8px 10px;
+    border-radius: 15px;
+    font-size: 10px;
     white-space: nowrap;
     cursor: pointer;
     display: none;
     pointer-events: auto;
+    gap: -20px
 }
 .opcoesmais:hover {
     background-color: #09092d;
@@ -461,8 +466,8 @@ body {
    ========================================================================== */
 .container-acoes-lixeira {
     position: fixed;
-    bottom: 40px;
-    right: 20px;
+    bottom: 45px;
+    right: 78px;
     display: flex;
     gap: 10px;
     z-index: 5000;
@@ -733,7 +738,7 @@ body {
     left: 0;
     width: 100%;
     /* Correção: Aumentado um pouco o tamanho fixo para não esmagar o texto */
-    height: 45px; 
+    height: 20px;
     background-color: #09092d;
     display: flex;
     justify-content: space-around;
