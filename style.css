@@ -2,16 +2,28 @@
    CONFIGURAÇÕES GERAIS E FONTES
    ========================================================================== */
 body {
-    background-color: #efefef;
-    margin: 0;
+    background-color: #e6e5e5;
+    margin: 11px 11px 11px 11px;
     font-family: sans-serif;
+    padding-bottom: 21px;
 }
 
+@font-face {
+    font-family: 'roboto-thin';
+    src: url('font/Roboto-thin.ttf') format('truetype');
+}
+@font-face {
+    font-family: 'roboto-light';
+    src: url('font/Roboto-light.ttf') format('truetype');
+}
 @font-face {
     font-family: 'roboto-medium';
     src: url('font/Roboto-medium.ttf') format('truetype');
 }
-
+@font-face {
+    font-family: 'roboto-bold';
+    src: url('font/Roboto-bold.ttf') format('truetype');
+}
 @font-face {
     font-family: 'roboto-black';
     src: url('font/Roboto-black.ttf') format('truetype');
@@ -21,34 +33,49 @@ body {
    MENU SUPERIOR / HEADER
    ========================================================================== */
 .logo {
-    height: 45px; 
+    height: 45px !important;
+    width: auto !important;
     margin: 11px;
 }
-.container-menu {
-    margin-top: 25px;
-    display: flex; 
+.logo .cls-1 {
+    fill: #1b2774;  /* mesma cor original */
 }
-.Minha {
+
+.container-menu {
+    margin-top: 14px;
+    display: flex; 
+    justify-content: space-between; /* Empurra o botão para a extrema direita */
+    align-items: center;
+    width: 100%;
+    box-sizing: border-box;
+    padding-right: 11px;
+}
+.logo-wrapper {
+    display: flex;
+}
+.IMAGINE {
     font-family: 'roboto-black', sans-serif;
-    color: #2838a3;
-    font-size: 17px;
-    margin-left: 0px;
-    margin-top: 10px;
+    color: #1b2774;
+    font-size: 19px;
+    margin-left: 1px;
+    margin-top: 9px;
 }
 .Biblioteca {
     font-family: 'roboto-black', sans-serif;
-    color: #09092d;
-    font-size: 19px;
-    margin-left: -46.5px;
-    margin-top: 27px;
+    color: #0e174f;
+    font-size: 15px;
+    margin-left: -72px;
+    margin-top: 32px;
 }
 
-/* SEARCH BAR */
+/* ==========================================================================
+   SEARCH BAR 
+   ========================================================================== */
 .formb {
     display: flex;
     align-items: center;
     margin-left: 11px;
-    margin-top: 11px;
+    margin-top: 7px;
     border: none;
     position: center;
     gap: 0.1px;
@@ -58,31 +85,35 @@ body {
 .busca {
     margin: 0px 11px 0 0;
     width: calc(100% - 11px);
-    background-color: #cccccc;
+    background-color: #bdc4e3;
     border: none;
-    font-size: 1rem;
+    font-size: 0.8rem;
     height: 25px;
     border-radius: 0px 50px 50px 0px; 
-
+    color:#1b2774 ;
+}
+.busca::placeholder {
+    color: #1b2774;
 }
 .botaob {
-    background-color: #cccccc;
+    background-color: #bdc4e3;
     border: none;
     cursor: pointer;
     padding: 0.2rem;
     height: 27px;
     margin-top: 0px;
     border-radius: 50px 0px 0px 50px;
-    
 }
 .lupa {
-    width: 1.1rem;
-    height: 1.1rem;
+    width: 1rem;
+    height: 1rem;
     margin-left: 0.4rem;
     align-items: center;
     position: center;
     display: flex;
+    color: #1b2774;
 }
+
 
 /* ==========================================================================
    BOTÃO FLUTUANTE DE AÇÃO (+)
@@ -90,35 +121,33 @@ body {
 .menumais {
     position: fixed;
     bottom: 50px;
-    right: 20px;
+    right: 15px;
     z-index: 50000;
 }
 .mais {
     width: 36px;
     height: 36px;
     border-radius: 50%;
-    font-size: 30px;
+    font-size: 28px;
     border: none;
     cursor: pointer;
     display: flex;
     align-items: center;
     justify-content: center;
-    font-family: 'roboto-medium', sans-serif;
-    background-color: #2838a3;
-    color: #fff;
-    /* Correção: Animando apenas o que muda para não travar a CPU */
+    font-family: 'roboto-black', sans-serif;
+    background-color: #1b2774;
+    color: #bdc4e3;
     transition: transform 0.2s ease, background-color 0.2s ease;
 }
 .mais:hover {
-    background-color: #09092d;
-    /* Correção: Em vez de mudar width e height (que quebra o layout), usamos transform */
-    transform: scale(1.2); 
+    background-color: #0e174f;
+    transform: scale(1.05); 
 }
 .opcoesmais {
     position: absolute;
     right: 0;
-    background-color: #2838a3;
-    color: white;
+    background-color: #1b2774;
+    color: #606890;
     padding: 8px 10px;
     border-radius: 15px;
     font-size: 10px;
@@ -126,27 +155,35 @@ body {
     cursor: pointer;
     display: none;
     pointer-events: auto;
-    gap: -20px
 }
 .opcoesmais:hover {
-    background-color: #09092d;
+    background-color: #0e174f;
+    color: #bdc4e3;
+    transform: scale(1.01); 
+    font-family: 'roboto-medium', sans-serif;
 }
-#escanear { bottom: 70px; font-family: 'roboto-medium', sans-serif; }
-#adicionar { bottom: 120px; font-family: 'roboto-medium', sans-serif; }
-
+#adicionar{
+    bottom: 85px
+}
+#escanear{
+    bottom: 50px
+}
 
 /* ==========================================================================
    SEÇÕES DE CARDS (RECENTES E PRINCIPAL)
    ========================================================================== */
 .recentes {
-    font-family: 'roboto-black', sans-serif;
+    font-family: 'roboto-light', sans-serif;
     font-size: 15px;
-    color: #09092d;
+    color: #0e174f;
     margin-left: 11px;
     margin-top: 15px;
 }
+.cardsR .card:hover {
+        transform: scale(1.02);
+}
 #recentes .capa-container {
-    height: 50px; /* Ou um formato mais horizontal */
+    height: 50px; 
     position: relative;
     border-radius: 12px;
     margin-top: -20px;
@@ -160,7 +197,7 @@ body {
     display: flex;
     flex-direction: row;
     gap: 12px;
-    margin-top: 0px;
+    margin-top: -10px;
     background-color: transparent;
     padding: 10px 11px;
     overflow-x: auto;
@@ -168,24 +205,39 @@ body {
 .cardsR .card {
     flex-direction: row;
     align-items: center;
-    background-color: white;
+    background-color: #bdc4e3;
     border-radius: 8px;
     padding: 8px;
-    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
-    width: 200px;
+    width: 180px;
+    height: 50px;
     flex-shrink: 0;
 }
 .cardsR .card .capa-container {
-    width: 65px;
     flex-shrink: 0;
 }
 .cardsR .card .info-container {
-    margin-left: 10px;
     display: flex;
     flex-direction: column;
     align-items: flex-start;
 }
-/* ESTRUTURA UNIFICADA DO CARD */
+.card-recente-titulo {
+    font-size: 10px !important;
+    color: #070729;
+    display:block;
+    -webkit-column-break-inside: 2;
+    -webkit-box-orient:vertical;
+    max-width: 150px;
+}
+.card-recente-autor{
+    font-size: 7px !important; 
+    margin: 0; 
+    color: #1b2774 !important;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 100%;
+}
+
 .card {
     display: flex;
     flex-direction: column;
@@ -194,11 +246,10 @@ body {
     padding: 10px;
     box-sizing: border-box;
     position: relative;
-    /* Evita que o navegador recalcule coisas fora do card */
     contain: layout; 
 }
 .card img {
-    width: 100%;
+    width: 50px;
     border-radius: 8px;
     aspect-ratio: 2 / 3;
     object-fit: cover;
@@ -215,27 +266,25 @@ body {
     gap: 4px;
     position: relative;
 }
-.btn-lixeira-card {
-    position: absolute;
-    top: 8px;
-    right: 8px;
-    background-color: rgba(255, 255, 255, 0.9);
-    border: none;
-    border-radius: 50%;
-    width: 30px;
-    height: 30px;
-    font-size: 14px;
-    cursor: pointer;
-    box-shadow: 0 2px 5px rgba(0,0,0,0.2);
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    transition: transform 0.2s, background-color 0.2s;
-    z-index: 10;
+
+.card-recente {
+    width: 200px;
+    height: 50px;
 }
-.btn-lixeira-card:hover {
-    background-color: #ffebee;
-    transform: scale(1.1);
+.card-recente-conteudo {
+    display: flex; align-items: center; gap: 10px; width: 100%;
+}
+.card-recente-capa {
+    width: 10px; height: 35px; object-fit: cover; border-radius: 4px;
+}
+.card-recente-info {
+    overflow: hidden; text-align: left;
+}
+.card-recente-titulo {
+    font-size: 5px; margin: 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+}
+.card-recente-autor {
+    font-size: 8px; margin: 3px 0 14px 0; color: #3d3d5a; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
 }
 
 /* ==========================================================================
@@ -248,12 +297,11 @@ body {
     padding: 10px 20px;
     box-sizing: border-box;
     gap: 20px;
-    margin-top: 5px;
-    margin-left: -7px;
+    margin-left: -10px;
 }
 .categoriascontainer {
     display: flex;
-    gap: 6px;
+    gap: 10px;
     overflow-x: auto;
     flex-grow: 1;
     scrollbar-width: none;
@@ -263,23 +311,146 @@ body {
 }
 .categoria-item {
     font-family: 'roboto-medium', sans-serif;
-    background-color: #09092d;
-    color: #5d5d6e;
+    background-color: #bdc4e3;
+    color: #1b2774;
     padding: 8px 15px;
-    border-radius: 10px;
+    border-radius: 20px;
     font-size: 8px;
     cursor: pointer;
     border: none;
 }
 .categoria-item:hover {
-    background-color: #2838a3;
-    color: #cccccc;
+    background-color: #1b2774;
+    color: #bdc4e3;
     font-family: 'roboto-black', sans-serif;
+    transform: scale(1.03);
 }
 .categoria-item.ativo {
-    background-color: #2838a3;
-    color: #cccccc;
+    background-color: #bdc4e3;
+    color: #1b2774;
+    font-family: 'roboto-black', sans-serif;
+    border-bottom: 2px solid currentColor;
 }
+
+/* ==========================================================================
+   CAPAS E MENU DE AÇÕES POR CIMA DA CAPA
+   ========================================================================== */
+.cardsC {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(130px, 1fr));
+    gap: 15px;
+    margin-top: -0px;
+    background: transparent;
+    border-radius: 20px;
+    padding: 10px;
+    text-align: center;
+    contain: content; 
+    align-items: center;
+}
+.cardsC .card:hover {
+        transform: scale(1.02);
+}
+
+.cardsC .card {
+    background-color: #bdc4e3;
+    border-radius: 8px;
+    padding: 8px;
+    width: 150px;
+    height: 280px;
+    flex-shrink: 0;
+    align-items: center;
+}
+#todoscardsC .capa-container {
+    width: 130px;
+    height: 200px;
+    position: relative;
+    border-radius: 12px;
+    overflow: hidden;
+}
+#todoscardsC .capa-livro {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    margin-top: 3px;
+}
+
+.titulo{
+    font-size: 12px !important;
+    margin-top: 3px !important; 
+    color: #09092d;
+    white-space: normal;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;       /* Define o limite máximo de 2 linhas */
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 150px;
+}
+.card-principal-autor{
+    font-size: 9px !important; 
+    margin-top: 2px; 
+    color: #1b2774;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 100%;
+}
+.menu-categorias-capa {
+    position: absolute;
+    bottom: 9px; 
+    left: 0px;
+    right: 0%;
+    display: flex;
+    justify-content: center;
+    background-color: #a1aacd; 
+    padding: 3px; 
+    border-radius: 9px;
+    opacity: 0;
+    visibility: hidden;
+    transform: translateY(10px); 
+    transition: opacity 0.3s ease, visibility 0.3s ease, transform 0.3s ease;
+}
+.capa-container:hover .menu-categorias-capa {
+    opacity: 1;
+    visibility: visible;
+}
+.btn-cat {
+    background: transparent;
+    border: 1px solid currentColor;
+    border-color: #1b2774;
+    border-radius: 4px;
+    color: #1b2774;
+    cursor: pointer;
+    font-size: 14px;
+    padding: 4px 2px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: background-color 0.15s ease, color 0.15s ease;
+}
+.btn-cat.cat-lendo.selecionado { background-color: #ff9800; border-color: #ff9800; color: #ffffff; }
+.btn-cat.cat-relendo.selecionado { background-color: #382ab7; border-color: #382ab7; color: #ffffff; }
+.btn-cat.cat-quero-ler.selecionado { background-color: #ffeb3b; border-color: #ffeb3b; color: #ffffff; }
+.btn-cat.cat-finalizados.selecionado { background-color: #4caf50; border-color: #4caf50; color: #ffffff; }
+.btn-cat.cat-abandonados.selecionado { background-color: #c62222; border-color: #c62222; color: #ffffff; }
+.btn-cat.cat-favoritos.selecionado { background-color: #ffc107; border-color: #ffc107; color: #ffffff; }
+
+.btn-cat.cat-lendo:hover { background-color: #ff9800; border-color: #ff9800; color: #ffffff; }
+.btn-cat.cat-relendo:hover { background-color: #382ab7; border-color: #382ab7; color: #ffffff; }
+.btn-cat.cat-quero-ler:hover { background-color: #ffeb3b; border-color: #ffeb3b; color: #ffffff; }
+.btn-cat.cat-finalizados:hover { background-color: #4caf50; border-color: #4caf50; color: #ffffff; }
+.btn-cat.cat-abandonados:hover { background-color: #c62222; border-color: #c62222; color: #ffffff; }
+.btn-cat.cat-favoritos:hover { background-color: #ffc107; border-color: #ffc107; color: #ffffff; }
+
+.btn-cat.selecionado svg { stroke: currentColor; }
+.modal-input-titulo, .modal-input-autor {
+    font-family: 'roboto-medium', sans-serif;
+    font-size: 7px;
+}
+
+/* ==========================================================================
+   Estilo do Balão de Filtros
+   ========================================================================== */
 .acoes-direita-container {
     display: flex;
     align-items: center;
@@ -289,445 +460,227 @@ body {
 .btn-acao-topo {
     background: none;
     border: none;
-    color: #09092d;
+    color: #1b2774;
     cursor: pointer;
     display: flex;
     align-items: center;
     justify-content: center;
     padding: 6px;
     transition: color 0.2s, transform 0.2s;
+    margin-right: -5px;
 }
 .btn-acao-topo:hover {
-    color: #2838a3;
+    color: #0e174f;
     transform: scale(1.08);
 }
-/* Garante o visual do botão selecionado na barra de filtros superior */
-.categoria-item.ativo {
-    /* Mantenha o estilo padrão que você já tem para o botão ativo, 
-       isso garante que a classe mude de um botão para o outro visualmente */
-    font-weight: bold;
-    border-bottom: 2px solid currentColor; /* Exemplo comum de destaque */
+.btn-acao-topo.ativo{
+   color: #555e85;
 }
-
-/* ==========================================================================
-   CAPAS E MENU DE AÇÕES POR CIMA DA CAPA
-   ========================================================================== */
-.cardsC {
-    display: grid;
-    /* Correção: Fixando uma largura média ideal para os cards sofrerem menos recálculos */
-    grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
-    gap: 15px;
-    margin-top: -10px;
-    margin-left: 11px;
-    background: transparent;
-    border-radius: 6px;
-    padding: 10px;
-    text-align: center;
-    /* Melhora performance de renderização no Chrome/celulares */
-    contain: content; 
-}
-#todoscardsC .capa-container {
-    width: 130px;  /* Ajusta a largura como preferires */
-    height: 200px; /* Ajusta a altura proporcionalmente */
-    position: relative;
-    border-radius: 12px;
-    overflow: hidden;
-}
-
-/* Garante que as imagens desses cards específicos se adaptam */
-#todoscardsC .capa-livro {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-}
-.menu-categorias-capa {
+.balao-filtro {
+    display: none; /* Escondido por padrão */
     position: absolute;
-    bottom: 8px; /* Mantém colado na parte inferior da capa */
-    left: 2px;
-    right: 2px;
-    display: flex;
-    justify-content: center;
-    background-color: #cccccc; 
-    padding: 3px; /* Aumentei um pouquinho para dar mais respiro aos botões */
-    border-radius: 6px;
-    opacity: 0;
-    visibility: hidden;
-    transform: translateY(10px); /* Dá um efeito suave de subir ao aparecer */
-    transition: opacity 0.3s ease, visibility 0.3s ease, transform 0.3s ease;
-}
-.capa-container:hover .menu-categorias-capa {
-    opacity: 1;
-    visibility: visible;
-    transform: translateY(0);
-}
-.btn-cat {
-    background: transparent;
-    border: 1px solid currentColor;
-    border-color: #09092d;
-    border-radius: 4px;
-    color: #09092d;
-    cursor: pointer;
-    font-size: 14px;
-    padding: 4px 2px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    /* Correção: Animando apenas cores, sem pesar a memória */
-    transition: background-color 0.15s ease, color 0.15s ease;
-}
-.btn-cat.cat-lendo.selecionado { 
-    background-color: #ff9800; 
-    border-color: #ff9800; 
-    color: #ffffff; 
-}
-.btn-cat.cat-relendo.selecionado { 
-    background-color: #382ab7; 
-    border-color: #382ab7; 
-    color: #ffffff; 
-}
-.btn-cat.cat-quero-ler.selecionado { 
-    background-color: #ffeb3b; 
-    border-color: #ffeb3b; 
-    color: #ffffff; 
-}
-.btn-cat.cat-finalizados.selecionado { 
-    background-color: #4caf50; 
-    border-color: #4caf50; 
-    color: #ffffff; 
-}
-.btn-cat.cat-abandonados.selecionado { 
-    background-color: #f44336; 
-    border-color: #f44336; 
-    color: #ffffff; 
-}
-.btn-cat.cat-favoritos.selecionado { 
-    background-color: #ffc107; 
-    border-color: #ffc107; 
-    color: #ffffff; 
-}
-.btn-cat.cat-lendo:hover {
-    background-color: #ff9800;
-    border-color: #ff9800;
-    color: #ffffff;
-}
-.btn-cat.cat-relendo:hover {
-    background-color: #382ab7;
-    border-color: #382ab7;
-    color: #ffffff;
-}
-.btn-cat.cat-quero-ler:hover {
-    background-color: #ffeb3b;
-    border-color: #ffeb3b;
-    color: #ffffff;
-}
-.btn-cat.cat-finalizados:hover {
-    background-color: #4caf50;
-    border-color: #4caf50;
-    color: #ffffff;
-}
-.btn-cat.cat-abandonados:hover {
-    background-color: #f44336; 
-    border-color: #f44336;
-    color: #ffffff;
-}
-.btn-cat.cat-favoritos:hover {
-    background-color: #ffc107;
-    border-color: #ffc107;
-    color: #ffffff;
-}
-.btn-cat.selecionado svg { 
-    stroke: currentColor; 
-}
-/* SEÇÃO LIXEIRA COLETIVA */
-.secao-lixeira {
-    padding: 20px 15px;
-    background-color: #f9f9fb;
-    min-height: calc(100vh - 60px);
-}
-.topo-lixeira {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 20px;
-}
-.btn-esvaziar {
-    background-color: #e74c3c;
-    color: white;
-    border: none;
-    padding: 6px 14px;
-    border-radius: 15px;
+    top: 115%;     /* Posiciona logo abaixo do botão */
+    right: 0;      /* Alinha com o canto direito do botão */
+    background-color: #1b2774; /* Tom azul-escuro igual à sua aba inferior */
+    color: #606890;
+    border-radius: 8px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+    padding: 6px 0;
+    min-width: 120px;
+    z-index: 3000; /* Garante que fique acima de outros elementos na tela */
     font-family: 'roboto-medium', sans-serif;
-    font-size: 11px;
-    cursor: pointer;
 }
 
+/* Classe que o JavaScript usará para exibir o balão */
+.balao-filtro.visivel {
+    display: block;
+}
+
+/* Opções de clique dentro do balão */
+.opcao-filtro {
+    padding: 8px 16px;
+    font-size: 12px;
+    cursor: pointer;
+    transition: background-color 0.2s, color 0.2s;
+    text-align: left;
+    white-space: nowrap;
+}
+
+/* Efeito ao passar o mouse nas opções */
+.opcao-filtro:hover {
+    background-color: #bdc4e3; /* Tom ligeiramente mais claro */
+    font-family: 'roboto-black', sans-serif;
+    color: #1b2774;
+}
+
+/* Destaque visual para a opção selecionada atualmente */
+.opcao-filtro.ativa {
+    color: #1b2774; /* Cor verde/ciano para destacar o filtro ativo */
+    background-color: #bdc4e3;
+    font-family: 'roboto-black', sans-serif;
+}
+.btn-acao-topo-btn-filtro-secao {
+color: #1b2774 !important;
+}
+.btn-acao-topo-btn-filtro-secao.ativo {
+color: #0e174f !important;
+}
+.btn-acao-topo-btn-filtro-secao:hover {
+color: #0e174f !important;
+}
 /* ==========================================================================
-   BOTÕES FLUTUANTES DA LIXEIRA (Selecionar Tudo + Deletar)
+   LIXEIRA E MODO EXCLUSÃO
    ========================================================================== */
+#btn-lixeira-secao {
+    margin-right: -17px;
+    color: #1b2774
+}
+#btn-lixeira-secao:hover {
+    color: #c62222 !important;
+}
 .container-acoes-lixeira {
     position: fixed;
-    bottom: 45px;
-    right: 78px;
+    bottom: 50px;
+    right: 68px;
     display: flex;
     gap: 10px;
     z-index: 5000;
 }
-
-/* Novo botão Selecionar Tudo */
 .btn-selecionar-tudo {
-    background-color: #2838a3;
-    color: white;
+    background-color: #1b2774;
+    color: #e6e5e5;
     border: none;
-    padding: 12px 20px;
-    border-radius: 6px;
+    padding: 8px 10px;
+    border-radius: 20px;
     font-family: 'roboto-medium', sans-serif;
-    font-size: 13px;
+    font-size: 10px;
     cursor: pointer;
     transition: background-color 0.2s, transform 0.2s;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
 }
-
 .btn-selecionar-tudo:hover {
-    background-color: #09092d;
+    background-color: #0f184f;
+    transform: scale(1.01);
+    font-family: 'roboto-bold', sans-serif;
 }
 .btn-deletar-secao {
-    position: static; /* Remove o posicionamento fixo antigo */
-    background-color: #e74c3c;
-    color: white;
+    position: static; 
+    background-color: #c62222;
+    color: #e6e5e5;
     border: none;
-    padding: 12px 20px;
-    border-radius: 6px;
+    padding: 8px 10px;
+    border-radius: 20px;
     font-family: 'roboto-medium', sans-serif;
-    font-size: 13px;
+    font-size: 10px;
     cursor: pointer;
     transition: background-color 0.2s;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
 }
-
 .btn-deletar-secao:hover {
-    background-color: #c0392b;
+background-color: #9b1d0f;
+color: #e6e5e5;
+ transform: scale(1.01);
+ font-family: 'roboto-bold', sans-serif;
 }
-.lista-lixeira {
-    display: flex;
-    flex-direction: column;
-    gap: 12px;
-}
-.card-lixo {
-    display: flex;
-    background-color: white;
-    padding: 10px;
-    border-radius: 8px;
-    box-shadow: 0 2px 5px rgba(0,0,0,0.03);
-    gap: 12px;
-}
-.capa-lixo {
-    width: 60px;
-    height: 90px;
-    border-radius: 4px;
-    object-fit: cover;
-}
-.info-lixo {
-    display: flex;
-    flex-direction: column;
-    justify-content: space-between;
-    flex: 1;
-}
-.titulo-livro-lixo {
-    font-family: 'roboto-medium', sans-serif;
-    font-size: 14px;
-    color: #09092d;
-    margin: 0;
-}
-.data-exclusao {
-    font-size: 11px;
-    color: #999999;
-    margin: 3px 0 0 0;
-}
-.acoes-lixo {
-    display: flex;
-    gap: 8px;
-}
-.btn-lixo-acao {
-    border: none;
-    background-color: #f5f5f5;
-    padding: 6px 10px;
-    border-radius: 4px;
-    font-size: 11px;
-    cursor: pointer;
+.card-selecionado-exclusao {
+    outline: 4px solid #c62222;
+    color:#c62222;
+    border-radius: 12px;
+    transform: scale(0.96);
     transition: all 0.2s ease;
 }
-.btn-restaurar:hover { background-color: #eef1ff; color: #2838a3; }
-.btn-excluir-fim:hover { background-color: #fce4e4; color: #e74c3c; }
-
 
 /* ==========================================================================
    MODAL DE EDIÇÃO DO LIVRO
    ========================================================================== */
 .modal-overlay {
     position: fixed;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
+    top: 0; left: 0; right: 0; bottom: 0;
     background-color: rgba(0, 0, 0, 0.5);
     display: flex;
     justify-content: center;
     align-items: center;
-    z-index: 10000;
+    z-index: 100000;
     padding: 20px;
 }
-
 .modal-conteudo {
-    background-color: white;
+    background-color: #e6e5e5;
+    color:#0e174f;
     border-radius: 12px;
     display: flex;
-    max-width: 600px;
+    max-width: 500px;
     width: 100%;
     max-height: 80vh;
     box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
     overflow: hidden;
     position: relative;
 }
-
 .modal-esquerda {
     flex: 0 0 45%;
-    background-color: #f5f5f5;
+    background-color: #e6e5e5;
     display: flex;
     flex-direction: column;
     align-items: center;
     padding: 20px;
+    color:#0e174f;
 }
-
 .btn-fechar-modal {
     position: absolute;
-    top: 12px;
-    left: 12px;
-    background: none;
-    border: none;
-    font-size: 24px;
-    color: #09092d;
-    cursor: pointer;
-    padding: 0;
-    width: 32px;
-    height: 32px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    transition: color 0.2s;
-    z-index: 10;
+    top: 7px; left: 9px;
+    background: none; border: none;
+    font-size: 20px; color: #1b2774;
+    cursor: pointer; padding: 0;
+    width: 32px; height: 32px;
+    display: flex; align-items: center; justify-content: center;
+    transition: color 0.2s; z-index: 10;
 }
-
-.btn-fechar-modal:hover {
-    color: #2838a3;
-}
-
+.btn-fechar-modal:hover { color: #0e174f; }
 .modal-capa {
-    width: 90%;
-    max-width: 200px;
+    width: 180px;
+    max-width: 190px;
     aspect-ratio: 2 / 3;
     object-fit: cover;
     border-radius: 8px;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
-    margin-top: 10px;
+    margin-top: 4px;
+    margin-left: 20px;
 }
-
 .modal-direita {
-    flex: 1;
-    padding: 30px;
-    display: flex;
-    flex-direction: column;
-    gap: 20px;
-    overflow-y: auto;
-    justify-content: space-between;
+    flex: 1; padding: 10px;
+    display: flex; flex-direction: column;
+    overflow-y: auto; 
+    gap: 15px;
+    justify-content: center;
+    margin-right: 20px;
+    margin-top: 40px;
 }
-
-.modal-campo {
-    display: flex;
-    flex-direction: column;
-    gap: 8px;
-}
-
+.modal-campo { display: flex; flex-direction: column; gap: 5px; }
 .modal-campo label {
-    font-family: 'roboto-medium', sans-serif;
-    font-size: 14px;
-    color: #09092d;
-    font-weight: 500;
+    font-family: 'roboto-black', sans-serif;
+    font-size: 14px; color: #101643; font-weight: 500;
 }
-
 .modal-campo input {
-    padding: 10px 12px;
-    border: 1px solid #cccccc;
-    border-radius: 6px;
-    font-size: 14px;
-    font-family: sans-serif;
+    padding: 10px 12px; border: 1px solid #1b2774;
+    border-radius: 6px; font-size: 12px; font-family: sans-serif;
     transition: border-color 0.2s;
+    color: #1b2774;
+    background-color: #bdc4e3;
 }
-
 .modal-campo input:focus {
-    outline: none;
-    border-color: #2838a3;
-    box-shadow: 0 0 0 3px rgba(40, 56, 163, 0.1);
+    outline: none; border-color: #1b2774;
 }
-
 .btn-salvar-modal {
-    background-color: #2838a3;
-    color: white;
-    border: none;
-    padding: 12px 20px;
-    border-radius: 6px;
-    font-family: 'roboto-medium', sans-serif;
-    font-size: 14px;
-    cursor: pointer;
-    transition: background-color 0.2s;
-    align-self: flex-end;
-    margin-top: 10px;
+    background-color: #1b2774; color: #cccccc;
+    border: none; padding: 12px 20px; border-radius: 6px;
+    font-family: 'roboto-medium', sans-serif; font-size: 11px;
+    cursor: pointer; transition: background-color 0.2s;
+    align-self: flex-end; margin-top: 42px;
 }
-
-.btn-salvar-modal:hover {
-    background-color: #09092d;
-}
+.btn-salvar-modal:hover { background-color: #0e174f; }
 
 @media (max-width: 600px) {
-    .modal-conteudo {
-        flex-direction: column;
-        max-height: none;
-        max-width: none;
-    }
-
-    .modal-esquerda {
-        flex: 0 0 auto;
-        padding: 15px;
-    }
-
-    .modal-direita {
-        flex: 1;
-        padding: 20px;
-    }
-
-    .btn-fechar-modal {
-        top: 8px;
-        right: 8px;
-    }
+    .modal-conteudo { flex-direction: column; max-height: none; max-width: none; }
+    .modal-esquerda { flex: 0 0 auto; padding: 15px; }
+    .modal-direita { flex: 1; padding: 20px; }
+    .btn-fechar-modal { top: 8px; right: 8px; }
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 /* ==========================================================================
    BARRA DE NAVEGAÇÃO INFERIOR COLETIVA
@@ -737,39 +690,201 @@ body {
     bottom: 0;
     left: 0;
     width: 100%;
-    /* Correção: Aumentado um pouco o tamanho fixo para não esmagar o texto */
     height: 20px;
-    background-color: #09092d;
+    background-color: #1b2774;
     display: flex;
     justify-content: space-around;
     align-items: center;
     z-index: 2000;
     padding: 5px 0;
-    box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.15);
-    font-family: 'roboto-black', sans-serif;
-    color: #cccccc;
 }
 .aba-item {
     display: flex;
     flex-direction: column;
     align-items: center;
     cursor: pointer;
-    font-family: 'roboto-black', sans-serif;
+    font-family: 'roboto-medium', sans-serif;
     font-size: 10px;
-    color: #5d5d6e;
+    color: #606890;
     text-decoration: none;
 }
-.aba-item.ativo {
-    color: #cccccc;
-    font-weight: bold;
+.aba-item:hover{
+    color: #e6e5e5;
+    font-family: 'roboto-bold', sans-serif;
 }
-/* ==========================================
-   MODO EXCLUSÃO
-========================================== */
+.aba-item.ativo {
+    color: #e6e5e5;
+    font-family: 'roboto-bold', sans-serif;
+}
 
-.card-selecionado-exclusao {
-    outline: 4px solid #f44336;
-    border-radius: 12px;
-    transform: scale(0.96);
-    transition: all 0.2s ease;
+/* ==========================================================================
+   TEMAS
+   ========================================================================== */
+.btn-tema {
+    position: absolute;
+    top: 13px;      /* ajuste conforme o espaçamento desejado */
+    right: 4px;
+    background: none;
+    border: none;
+    color: #1b2774;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 8px;
+    transition: transform 0.2s ease, color 0.2s ease;
+}
+.container-menu {
+    position: relative;  /* adicione */
+    /* resto do estilo existente */
+}
+.btn-tema:hover {
+    color: #39458f;
+    transform: scale(1.1);
+}
+
+
+
+
+/* Regras aplicadas quando o body tiver a classe .dark-mode */
+body.dark-mode {
+    background-color: #0d0e15; /* Fundo escuro profundo */
+    color: #bdc4e3;
+}
+
+body.dark-mode .logo .cls-1{
+fill: #8e9cd6;
+}
+body.dark-mode .IMAGINE {
+color:#8e9cd6
+}
+body.dark-mode .Biblioteca {
+    color: #39458f;
+}
+body.dark-mode .recentes{
+color: #8e9cd6;
+}
+
+body.dark-mode .botaob,
+body.dark-mode .lupa,
+body.dark-mode .busca::placeholder {
+    color: #1c2351 !important;
+    background-color: #0d1127 !important;
+}
+body.dark-mode .busca {
+    color: #bdc4e3 !important;
+    background-color: #0d1127 !important;
+}
+
+body.dark-mode .mais {
+    background-color: #121839;
+    color: #39458f;
+}
+body.dark-mode .mais:hover {
+    background-color: #1c2351;
+    color: #bdc4e3;
+}
+body.dark-mode .opcoesmais {
+    background-color: #121839;
+    color: #39458f;
+}
+body.dark-mode .opcoesmais:hover {
+    background-color: #1c2351;
+    color: #bdc4e3;
+}
+
+
+
+
+body.dark-mode .cardsR .card,
+body.dark-mode .cardsC .card,
+body.dark-mode .modal-conteudo,
+body.dark-mode .modal-esquerda,
+body.dark-mode .card,
+body.dark-mode .menu-categorias-capa {
+    background-color: #0d1127;
+}
+
+body.dark-mode .btn-cat {
+border-color: #1c2351;
+color: #1c2351
+}
+
+body.dark-mode .card-recente-titulo,
+body.dark-mode .titulo{
+color: #bdc4e3;
+}
+body.dark-mode .card-recente-autor,
+body.dark-mode .card-principal-autor{
+color: #39458f !important;
+}
+
+body.dark-mode .busca,
+body.dark-mode .modal-campo label,
+body.dark-mode .btn-fechar-modal,
+body.dark-mode .btn-acao-topo {
+color: #bdc4e3;
+}
+
+body.dark-mode .modal-campo input {
+    background-color: #1c2351;
+    border-color: transparent;
+    color: #39458f;
+}
+
+
+
+
+body.dark-mode .btn-acao-topo {
+    color: #1b2774;
+}
+body.dark-mode .btn-acao-topo:hover {
+    color: #39458f;
+}
+body.dark-mode .btn-acao-topo.ativo{
+   color: #39458f;
+}
+body.dark-mode .opcao-filtro:hover {
+    background-color: #1c2351; 
+    color: #0d1127;
+}
+body.dark-mode .opcao-filtro.ativa {
+    color: #0d1127; 
+    background-color: #1c2351;
+}
+body.dark-mode .balao-filtro {
+background-color: #0d1127;
+}
+
+body.dark-mode .categoria-item {
+    background-color: #0d1127;
+    color: #1c2351;
+}
+
+.categoria-item:hover {
+    background-color: #121839 !important;
+    color: #39458f !important;
+}
+.categoria-item.ativo {
+    background-color: #121839 !important;
+    color: #39458f !important;
+}
+
+body.dark-mode .aba-inferior {
+background-color: #121839 !important;
+}
+body.dark-mode .aba-item {
+color: #39458f !important;
+}
+body.dark-mode .aba-item:hover{
+    color: #bdc4e3 !important;
+}
+body.dark-mode .aba-item.ativo {
+    color: #bdc4e3 !important;
+}
+body.dark-mode .btn-tema{
+    color: #8e9cd6;
+}
+body.dark-mode .btn-tema:hover{
+    color: #bdc4e3;
 }

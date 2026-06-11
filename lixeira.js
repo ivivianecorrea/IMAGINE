@@ -24,7 +24,7 @@ function renderizarLixeira() {
         // Botão para restaurar o livro de volta à biblioteca
         const btnRestaurar = document.createElement('button');
         btnRestaurar.textContent = "♻️ Restaurar";
-        btnRestaurar.style.cssText = "width: 100%; padding: 8px; margin-top: 5px; background: #2838a3; color: white; border: none; border-radius: 5px; cursor: pointer;";
+        btnRestaurar.style.cssText = "width: 100%; padding: 8px; margin-top: 5px; border-radius: 5px; cursor: pointer;";
         btnRestaurar.addEventListener('click', () => restaurarLivro(livro.id));
         card.appendChild(img);
         card.appendChild(h3);

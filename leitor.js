@@ -77,56 +77,51 @@ function executarLeitor() {
                 if (livro.formato === "pdf") {
                     const url = URL.createObjectURL(blob);
                     
-                    // O SEGREDO ESTÁ AQUI: Adicionamos #toolbar=0&navpanes=0 na URL
-                    // Isso diz ao navegador para esconder os botões e painéis laterais
                     container.innerHTML = `
                         <iframe
                             src="${url}#toolbar=0&navpanes=0"
                             style="width:100%; height:100%; border:none;">
                         </iframe>
                     `;
-                    return; // Encerra a função aqui se for um PDF
+                    return;
                 }
 
                 // ==================================================
                 // Processamento de EPUB
                 // ==================================================
                 if (livro.formato === "epub") {
-                    console.log("Processando EPUB...");
+                    console.log("Processando EPUB mantendo estilos originais...");
                     const reader = new FileReader();
 
-                    // Instrução 1: O que fazer se der erro
                     reader.onerror = () => {
                         mostrarErro("Erro ao ler o arquivo EPUB.");
                     };
 
-                    // Instrução 2: O que fazer quando terminar de ler
                     reader.onload = function(e) {
                         try {
                             const arrayBuffer = e.target.result;
                             console.log("ArrayBuffer carregado com sucesso.");
                             
                             const book = ePub(arrayBuffer);
+                            
+                            // Modo contínuo ativado
                             const rendition = book.renderTo("conteudo-livro", {
                                 width: "100%",
                                 height: "100%",
-                                flow: "scrolled",
-                                manager: "continuous",
-                                spread: "none",
-                                allowScriptedContent: true
+                                flow: "scrolled",        
+                                manager: "continuous",   
+                                spread: "none"
+                            });
+
+                            // MÁGICA: Retiramos TODO o padding (enchimento) daqui de dentro.
+                            // Deixamos apenas a fonte como Plano B.
+                            rendition.themes.default({
+                                "body": {
+                                    "font-family": "'roboto-medium', sans-serif"
+                                }
                             });
 
                             rendition.display();
-
-                            setTimeout(() => {
-                                const iframes = container.querySelectorAll("iframe");
-                                iframes.forEach((iframe) => {
-                                    iframe.setAttribute(
-                                        "sandbox",
-                                        "allow-same-origin allow-scripts allow-popups allow-forms"
-                                    );
-                                });
-                            }, 1000);
 
                         } catch(err) {
                             console.error(err);
@@ -134,20 +129,18 @@ function executarLeitor() {
                         }
                     };
 
-                    // O Comando de Ação: Inicia a leitura do arquivo cru (blob)
+                    // Inicia a leitura do arquivo cru (blob)
                     reader.readAsArrayBuffer(blob);
-                    return; // Encerra a função aqui se for um EPUB
+                    return;
                 }
 
-                // ==================================================
-                // Formato desconhecido (Se não entrou em nenhum dos IFs acima)
-                // ==================================================
                 throw new Error(`Formato não suportado: ${livro.formato}`);
 
             } catch(err) {
                 console.error(err);
                 mostrarErro(err.message);
             }
+            
         };
     };
 }

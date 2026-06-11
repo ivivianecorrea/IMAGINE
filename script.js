@@ -9,6 +9,8 @@ pedidoDB.onupgradeneeded = (e) => {
     }
 };
 
+pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.4.120/pdf.worker.min.js';
+
 document.addEventListener('DOMContentLoaded', () => {
 
     // ==========================================================================
@@ -29,9 +31,16 @@ document.addEventListener('DOMContentLoaded', () => {
     const containerCardsR = document.getElementById('todoscardsR');
     const btnDeletarSelecionados = document.getElementById('btn-deletar-selecionados');
     const inputArquivo = document.getElementById('input-arquivo');
+    const inputPasta = document.getElementById('input-pasta');  // NOVO
     const buscaInput = document.querySelector('.busca');
     const formBusca = document.querySelector('.formb');
     const botoesCategoria = document.querySelectorAll('.categoria-item');
+
+    // Filtros
+    const btnFiltro = document.getElementById('btn-filtro');
+    const balaoFiltro = document.getElementById('balao-filtro');
+    const opcoesFiltro = document.querySelectorAll('.opcao-filtro');
+    let ordenacaoAtual = 'padrao';
 
     // Elementos do Modal de Edição
     const modalEdicao = document.getElementById('modal-edicao-livro');
@@ -43,12 +52,89 @@ document.addEventListener('DOMContentLoaded', () => {
     let livroSendoEditadoId = null;
 
     // ==========================================================================
-    // 3. RENDERIZAÇÃO INTERNA OTIMIZADA
+    // 3. FUNÇÃO REUTILIZÁVEL PARA ADICIONAR UM ARQUIVO (PDF/EPUB)
+    // ==========================================================================
+    async function adicionarLivroPorArquivo(arquivo, idUnico) {
+        return new Promise(async (resolve, reject) => {
+            const extensao = arquivo.name.split('.').pop().toLowerCase();
+            let capaBase64 = 'img/capapadrao.jpg';
+
+            // Extrair capa
+            try {
+                if (extensao === 'pdf') {
+                    const arrayBuffer = await arquivo.arrayBuffer();
+                    const pdf = await pdfjsLib.getDocument({ data: arrayBuffer }).promise;
+                    const page = await pdf.getPage(1);
+                    const viewport = page.getViewport({ scale: 0.5 });
+                    const canvas = document.createElement('canvas');
+                    const context = canvas.getContext('2d');
+                    canvas.height = viewport.height;
+                    canvas.width = viewport.width;
+                    await page.render({ canvasContext: context, viewport: viewport }).promise;
+                    capaBase64 = canvas.toDataURL('image/jpeg');
+                } 
+                else if (extensao === 'epub') {
+                    const arrayBuffer = await arquivo.arrayBuffer();
+                    const book = ePub(arrayBuffer);
+                    let coverUrl = await book.coverUrl();
+                    if (!coverUrl) {
+                        await book.ready;
+                        const coverItem = book.resources.replacementUrls.find(url => 
+                            url.includes('cover') || url.includes('Capa') || url.includes('capa')
+                        );
+                        if (coverItem) coverUrl = coverItem;
+                        else {
+                            const firstImage = book.resources.replacementUrls.find(url => 
+                                url.endsWith('.jpg') || url.endsWith('.jpeg') || url.endsWith('.png')
+                            );
+                            if (firstImage) coverUrl = firstImage;
+                        }
+                    }
+                    if (coverUrl) {
+                        const resposta = await fetch(coverUrl);
+                        const blob = await resposta.blob();
+                        capaBase64 = await new Promise((resolve) => {
+                            const leitor = new FileReader();
+                            leitor.onloadend = () => resolve(leitor.result);
+                            leitor.readAsDataURL(blob);
+                        });
+                    }
+                }
+            } catch (err) {
+                console.warn("Erro ao extrair capa de", arquivo.name, err);
+            }
+
+            // Salvar no IndexedDB
+            const reqDB = indexedDB.open("BibliotecaArquivos", 1);
+            reqDB.onsuccess = (eventoDB) => {
+                const db = eventoDB.target.result;
+                const tx = db.transaction("arquivos", "readwrite");
+                tx.objectStore("arquivos").put(arquivo, idUnico);
+                tx.oncomplete = () => {
+                    const novoLivro = {
+                        id: idUnico,
+                        titulo: arquivo.name.replace(/\.[^/.]+$/, ""),
+                        autor: '',
+                        formato: extensao,
+                        categoria: 'todos',
+                        capa: capaBase64,
+                        lidoRecentemente: false,
+                        favorito: false
+                    };
+                    resolve(novoLivro);
+                };
+                tx.onerror = (e) => reject(e);
+            };
+            reqDB.onerror = (e) => reject(e);
+        });
+    }
+
+    // ==========================================================================
+    // 4. RENDERIZAÇÃO INTERNA OTIMIZADA
     // ==========================================================================
     function renderizarBiblioteca(categoriaFiltro = 'todos', termoBusca = '') {
         if (!containerCardsC) return;
         
-        // Limpa os containers antes de desenhar para evitar duplicações e loops
         containerCardsC.innerHTML = '';
         if (containerCardsR) {
             containerCardsR.innerHTML = '';
@@ -56,7 +142,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
         const termoMin = termoBusca.toLowerCase().trim();
 
-        // Filtro aceita a propriedade favorita cumulativa/independente
         const livrosFiltrados = meusLivros.filter(livro => {
             const correspondeCategoria = categoriaFiltro === 'todos' || 
                                          (categoriaFiltro === 'favoritos' ? livro.favorito === true : livro.categoria === categoriaFiltro);
@@ -64,101 +149,76 @@ document.addEventListener('DOMContentLoaded', () => {
                                      (livro.autor && livro.autor.toLowerCase().includes(termoMin));
             return correspondeCategoria && correspondeBusca;
         });
+
+        if (ordenacaoAtual === 'az') {
+            livrosFiltrados.sort((a, b) => a.titulo.localeCompare(b.titulo));
+        } else if (ordenacaoAtual === 'za') {
+            livrosFiltrados.sort((a, b) => b.titulo.localeCompare(a.titulo));
+        }
         
-        // 1. Renderiza os Recentes (Apenas os que têm lidoRecentemente === true)
         if (containerCardsR) {
+            const templateRecente = document.getElementById('template-card-recente');
             const ultimosRecentes = meusLivros
                 .filter(livro => livro.lidoRecentemente === true)
                 .reverse()
-                .slice(0, 4); // Limita aos 4 últimos
+                .slice(0, 4); 
 
             ultimosRecentes.forEach(livro => {
-                const cardR = document.createElement('div');
-                cardR.className = 'card';
-                cardR.style.width = '200px';
-                cardR.innerHTML = `
-                    <div style="display: flex; align-items: center; gap: 10px; width: 100%;">
-                        <img src="${livro.capa || 'img/capapadrao.jpg'}" alt="Capa" style="width: 50px; height: 75px; object-fit: cover; border-radius: 4px;">
-                        <div style="overflow: hidden; text-align: left;">
-                            <h3 class="titulo" style="font-size: 13px; margin: 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">${livro.titulo}</h3>
-                            <p style="font-size: 11px; margin: 3px 0 0 0; color: #5d5d6e; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">${livro.autor || 'Desconhecido'}</p>
-                        </div>
-                    </div>
-                `;
-                cardR.addEventListener('click', () => abrirModalEdicao(livro));
+                const clone = templateRecente.content.cloneNode(true);
+                const cardR = clone.querySelector('.card');
+                cardR.querySelector('.card-recente-capa').src = livro.capa || 'img/capapadrao.jpg';
+                cardR.querySelector('.card-recente-titulo').textContent = livro.titulo;
+                cardR.querySelector('.card-recente-autor').textContent = livro.autor || 'Desconhecido';
+                cardR.addEventListener('click', () => {
+                    window.open(`leitor.html?id=${livro.id}`, '_blank');
+                });
                 containerCardsR.appendChild(cardR);
             });
         }
         
-        // 2. Renderiza os Livros na Grade Principal (Todos Filtrados com Ícones SVG)
+        const templatePrincipal = document.getElementById('template-card-principal');
+        
         livrosFiltrados.forEach(livro => {
-            const card = document.createElement('div');
-            card.className = `card card-livro-individual ${livrosSelecionados.includes(livro.id) ? 'card-selecionado-exclusao' : ''}`;
+            const clone = templatePrincipal.content.cloneNode(true);
+            const card = clone.querySelector('.card');
             card.dataset.id = livro.id;
+            
+            if (livrosSelecionados.includes(livro.id)) {
+                card.classList.add('card-selecionado-exclusao');
+            }
 
-            card.innerHTML = `
-                <div class="capa-container">
-                    <img class="capa-livro" src="${livro.capa || 'img/capapadrao.jpg'}" alt="Capa do Livro" loading="lazy">
-                    <div class="menu-categorias-capa">
-                        <button class="btn-cat cat-lendo ${livro.categoria === 'lendo' ? 'selecionado' : ''}" title="Lendo" data-cat="lendo">
-                            <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"></path><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"></path></svg>
-                        </button>
-                        
-                        <button class="btn-cat cat-relendo ${livro.categoria === 'relendo' ? 'selecionado' : ''}" title="Relendo" data-cat="relendo">
-                            <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 4 23 10 17 10"></polyline><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"></path></svg>
-                        </button>
-                        
-                        <button class="btn-cat cat-quero-ler ${livro.categoria === 'quero-ler' ? 'selecionado' : ''}" title="Quero Ler" data-cat="quero-ler">
-                            <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"></path></svg>
-                        </button>
-                        
-                        <button class="btn-cat cat-finalizados ${livro.categoria === 'finalizados' ? 'selecionado' : ''}" title="Finalizados" data-cat="finalizados">
-                            <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>
-                        </button>
-                        
-                        <button class="btn-cat cat-abandonados ${livro.categoria === 'abandonados' ? 'selecionado' : ''}" title="Abandonados" data-cat="abandonados">
-                            <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
-                        </button>
-                        
-                        <button class="btn-cat cat-favoritos ${livro.favorito ? 'selecionado' : ''}" title="Favoritos" data-cat="favoritos">
-                            <svg viewBox="0 0 24 24" width="14" height="14" fill="currentColor"><path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"/></svg>
-                        </button>
-                    </div>
-                </div>
-                <div class="card-info">
-                    <h3 class="titulo">${livro.titulo}</h3>
-                    <p class="autor" style="font-size: 11px; margin: 0; color: #5d5d6e;">${livro.autor || 'Autor Desconhecido'}</p>
-                </div>
-            `;
+            card.querySelector('.capa-livro').src = livro.capa || 'img/capapadrao.jpg';
+            card.querySelector('.titulo').textContent = livro.titulo;
+            card.querySelector('.card-principal-autor').textContent = livro.autor || 'Autor Desconhecido';
 
-            // Clique no card (Abre edição ou seleciona para exclusão)
-            card.addEventListener('click', (e) => {
-                if (e.target.closest('.btn-cat')) return;
-
-                if (modoExclusaoAtivo) {
-                    toggleSelecaoLivro(livro.id, card);
-                } else {
-                    abrirModalEdicao(livro);
-                }
-            });
-
-            // Gerenciar alteração de categoria nos botões da capa
             const botoesCatCapa = card.querySelectorAll('.btn-cat');
             botoesCatCapa.forEach(btn => {
+                const catDoBotao = btn.dataset.cat;
+                if ((catDoBotao === 'favoritos' && livro.favorito) || 
+                    (catDoBotao !== 'favoritos' && livro.categoria === catDoBotao)) {
+                    btn.classList.add('selecionado');
+                }
                 btn.addEventListener('click', (e) => {
                     e.stopPropagation();
                     const novaCat = btn.dataset.cat;
-                    
                     if (novaCat === 'favoritos') {
                         livro.favorito = !livro.favorito;
                     } else {
                         livro.categoria = livro.categoria === novaCat ? 'todos' : novaCat;
                     }
-                    
                     salvarDados();
                     const catAtiva = document.querySelector('.categoria-item.ativo')?.dataset.categoria || 'todos';
                     renderizarBiblioteca(catAtiva, buscaInput ? buscaInput.value : '');
                 });
+            });
+
+            card.addEventListener('click', (e) => {
+                if (e.target.closest('.btn-cat')) return;
+                if (modoExclusaoAtivo) {
+                    toggleSelecaoLivro(livro.id, card);
+                } else {
+                    abrirModalEdicao(livro);
+                }
             });
 
             containerCardsC.appendChild(card);
@@ -170,30 +230,69 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     // ==========================================================================
-    // 4. CRIAR NOVO LIVRO (Modificado para sincronizar com IndexedDB)
+    // 5. EVENTO PARA ADICIONAR ARQUIVO ÚNICO (mantido)
     // ==========================================================================
-    window.criarNovoCardNoApp = function(titulo, formato, idNovo) {
-        const novoLivro = {
-            id: idNovo, // Recebe o ID único gerado no evento de upload
-            titulo: titulo,
-            autor: '',
-            formato: formato,
-            categoria: 'todos',
-            capa: 'img/capapadrao.jpg',
-            lidoRecentemente: false,
-            favorito: false
-            // O conteúdo textual bruto não é mais salvo aqui para economizar o localStorage
-        };
-
-        meusLivros.push(novoLivro);
-        salvarDados();
-        
-        const catAtiva = document.querySelector('.categoria-item.ativo')?.dataset.categoria || 'todos';
-        renderizarBiblioteca(catAtiva, buscaInput ? buscaInput.value : '');
-    };
+    if (inputArquivo) {
+        inputArquivo.addEventListener('change', async (e) => {
+            const arquivo = e.target.files[0];
+            if (!arquivo) return;
+            const idNovo = Date.now().toString();
+            try {
+                const novoLivro = await adicionarLivroPorArquivo(arquivo, idNovo);
+                meusLivros.unshift(novoLivro);
+                salvarDados();
+                renderizarBiblioteca();
+            } catch (err) {
+                console.error("Erro ao adicionar arquivo:", err);
+                alert("Falha ao adicionar o arquivo.");
+            }
+            inputArquivo.value = '';
+        });
+    }
 
     // ==========================================================================
-    // 5. CONTROLE DO MENU FLUTUANTE BOTÃO (+) E LEITURA DE ARQUIVO (IndexedDB)
+    // 6. ESCANEAMENTO DE PASTA (vários arquivos)
+    // ==========================================================================
+    if (inputPasta) {
+        inputPasta.addEventListener('change', async (e) => {
+            const files = Array.from(e.target.files);
+            const arquivosLivros = files.filter(file => {
+                const ext = file.name.split('.').pop().toLowerCase();
+                return ext === 'pdf' || ext === 'epub';
+            });
+
+            if (arquivosLivros.length === 0) {
+                alert("Nenhum arquivo PDF ou EPUB encontrado nesta pasta.");
+                return;
+            }
+
+            // Desabilitar o botão durante o processo (opcional)
+            const escanearBtn = document.getElementById('escanear');
+            if (escanearBtn) escanearBtn.style.pointerEvents = 'none';
+            
+            let contador = 0;
+            for (const arquivo of arquivosLivros) {
+                const idUnico = Date.now() + '_' + contador + '_' + Math.random().toString(36).substr(2, 5);
+                try {
+                    const novoLivro = await adicionarLivroPorArquivo(arquivo, idUnico);
+                    meusLivros.unshift(novoLivro);
+                    salvarDados();
+                    // Re-renderiza a cada adição (ou pode fazer apenas no final)
+                    renderizarBiblioteca();
+                    contador++;
+                } catch (err) {
+                    console.error("Erro ao adicionar", arquivo.name, err);
+                }
+            }
+            
+            if (escanearBtn) escanearBtn.style.pointerEvents = 'auto';
+            alert(`${contador} livro(s) adicionado(s) com sucesso!`);
+            inputPasta.value = ''; // limpa para permitir nova seleção
+        });
+    }
+
+    // ==========================================================================
+    // 7. EVENTOS DE MENU, FILTROS E LIXEIRA
     // ==========================================================================
     if (btnMais) {
         btnMais.addEventListener('click', (evento) => {
@@ -201,6 +300,31 @@ document.addEventListener('DOMContentLoaded', () => {
             const estaoAbertos = btnAdicionar.style.display === 'block';
             if (btnAdicionar) btnAdicionar.style.display = estaoAbertos ? 'none' : 'block';
             if (btnEscanear) btnEscanear.style.display = estaoAbertos ? 'none' : 'block';
+        });
+    }
+
+    // Ações do Filtro Dropdown (igual ao original)
+    if (btnFiltro && balaoFiltro) {
+        btnFiltro.addEventListener('click', (e) => {
+            e.stopPropagation(); 
+            balaoFiltro.classList.toggle('visivel');
+        });
+
+        document.addEventListener('click', (e) => {
+            if (!balaoFiltro.contains(e.target) && e.target !== btnFiltro) {
+                balaoFiltro.classList.remove('visivel');
+            }
+        });
+
+        opcoesFiltro.forEach(opcao => {
+            opcao.addEventListener('click', () => {
+                opcoesFiltro.forEach(opt => opt.classList.remove('ativa'));
+                opcao.classList.add('ativa');
+                ordenacaoAtual = opcao.dataset.ordem;
+                balaoFiltro.classList.remove('visivel');
+                const catAtiva = document.querySelector('.categoria-item.ativo')?.dataset.categoria || 'todos';
+                renderizarBiblioteca(catAtiva, buscaInput ? buscaInput.value : '');
+            });
         });
     }
 
@@ -216,41 +340,14 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    if (inputArquivo) {
-        inputArquivo.addEventListener('change', (evento) => {
-            const arquivoSelecionado = evento.target.files[0];
-            if (arquivoSelecionado) {
-                const nomeCompleto = arquivoSelecionado.name;
-                const partes = nomeCompleto.split('.');
-                const extensao = partes.pop().toLowerCase();
-                const tituloDoLivro = partes.join('.'); 
-
-                // Cria o ID único que vai ligar o item do LocalStorage ao arquivo do IndexedDB
-                const idNovo = Date.now().toString(); 
-
-                // Abre o banco IndexedDB e guarda o arquivo binário bruto (Blob) do PDF/EPUB
-                const req = indexedDB.open("BibliotecaArquivos", 1);
-                req.onsuccess = (e) => {
-                    const db = e.target.result;
-                    const tx = db.transaction("arquivos", "readwrite");
-                    const store = tx.objectStore("arquivos");
-                    
-                    store.put(arquivoSelecionado, idNovo); // Salva o arquivo inteiro de forma segura
-                    
-                    tx.oncomplete = () => {
-                        // Só cria o card visual na tela após o arquivo terminar de ser salvo
-                        window.criarNovoCardNoApp(tituloDoLivro, extensao, idNovo);
-                    };
-                };
-                
-                inputArquivo.value = '';
-            }
+    // Escanear dispositivo: abrir seletor de pasta
+    if (btnEscanear && inputPasta) {
+        btnEscanear.addEventListener('click', (evento) => {
+            evento.stopPropagation();
+            inputPasta.click();
         });
     }
 
-    // ==========================================================================
-    // 6. FILTROS DE CATEGORIA E BUSCA
-    // ==========================================================================
     botoesCategoria.forEach(botao => {
         botao.addEventListener('click', () => {
             botoesCategoria.forEach(b => b.classList.remove('ativo'));
@@ -270,31 +367,33 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     // ==========================================================================
-    // 7. MODO DE EXCLUSÃO (Modificado para limpar também o IndexedDB)
+    // 8. MODO DE EXCLUSÃO (mantido igual)
     // ==========================================================================
     const containerAcoesLixeira = document.getElementById('container-acoes-lixeira');
     const btnSelecionarTudo = document.getElementById('btn-selecionar-tudo');
 
     if (btnLixeiraSecao) {
-        btnLixeiraSecao.addEventListener('click', () => {
-            modoExclusaoAtivo = !modoExclusaoAtivo;
-            livrosSelecionados = [];
+    btnLixeiraSecao.addEventListener('click', () => {
+        modoExclusaoAtivo = !modoExclusaoAtivo;
+        livrosSelecionados = [];
 
-            if (modoExclusaoAtivo) {
-                btnLixeiraSecao.style.backgroundColor = '#e74c3c';
-                btnLixeiraSecao.style.color = '#fff';
-                if (containerAcoesLixeira) containerAcoesLixeira.style.display = 'flex';
-                if (btnSelecionarTudo) btnSelecionarTudo.textContent = 'Selecionar Tudo';
-            } else {
-                btnLixeiraSecao.style.backgroundColor = 'transparent';
-                btnLixeiraSecao.style.color = '#09092d';
-                if (containerAcoesLixeira) containerAcoesLixeira.style.display = 'none';
-            }
+        if (modoExclusaoAtivo) {
+            // Modo ativo: aplica estilo inline apenas para destacar (opcional)
+            btnLixeiraSecao.style.color = '#c62222';
+            btnLixeiraSecao.style.backgroundColor = 'transparent';
+            if (containerAcoesLixeira) containerAcoesLixeira.style.display = 'flex';
+            if (btnSelecionarTudo) btnSelecionarTudo.textContent = 'Selecionar Tudo';
+        } else {
+            // Remove os estilos inline para voltar ao CSS original
+            btnLixeiraSecao.style.color = '';
+            btnLixeiraSecao.style.backgroundColor = '';
+            if (containerAcoesLixeira) containerAcoesLixeira.style.display = 'none';
+        }
 
-            const catAtiva = document.querySelector('.categoria-item.ativo')?.dataset.categoria || 'todos';
-            renderizarBiblioteca(catAtiva, buscaInput ? buscaInput.value : '');
-        });
-    }
+        const catAtiva = document.querySelector('.categoria-item.ativo')?.dataset.categoria || 'todos';
+        renderizarBiblioteca(catAtiva, buscaInput ? buscaInput.value : '');
+    });
+}
 
     if (btnSelecionarTudo) {
         btnSelecionarTudo.addEventListener('click', () => {
@@ -361,33 +460,22 @@ document.addEventListener('DOMContentLoaded', () => {
             if (livrosSelecionados.length === 0) return;
 
             if (confirm(`Deseja mesmo remover os ${livrosSelecionados.length} livros selecionados?`)) {
-                
-                // Abre o IndexedDB para apagar também os arquivos reais pesados associados
                 const req = indexedDB.open("BibliotecaArquivos", 1);
                 req.onsuccess = (e) => {
                     const db = e.target.result;
                     const tx = db.transaction("arquivos", "readwrite");
                     const store = tx.objectStore("arquivos");
-                    
-                    // Remove cada arquivo do IndexedDB
-                    livrosSelecionados.forEach(id => {
-                        store.delete(id);
-                    });
-                    
+                    livrosSelecionados.forEach(id => store.delete(id));
                     tx.oncomplete = () => {
-                        // Só limpa o LocalStorage e atualiza a interface após apagar do IndexedDB
                         meusLivros = meusLivros.filter(livro => !livrosSelecionados.includes(livro.id));
                         salvarDados();
-                        
                         livrosSelecionados = [];
                         modoExclusaoAtivo = false;
-                        
                         if (containerAcoesLixeira) containerAcoesLixeira.style.display = 'none';
-                        if (btnLixeiraSecao) {
-                            btnLixeiraSecao.style.backgroundColor = 'transparent';
-                            btnLixeiraSecao.style.color = '#09092d';
-                        }
-
+                       if (btnLixeiraSecao) {
+    btnLixeiraSecao.style.color = '';
+    btnLixeiraSecao.style.backgroundColor = '';
+}
                         const catAtiva = document.querySelector('.categoria-item.ativo')?.dataset.categoria || 'todos';
                         renderizarBiblioteca(catAtiva, buscaInput ? buscaInput.value : '');
                     };
@@ -397,7 +485,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     // ==========================================================================
-    // 8. CONTROLE DO MODAL DE EDIÇÃO E DIREÇÃO PARA LEITURA
+    // 9. CONTROLE DO MODAL DE EDIÇÃO E DIREÇÃO PARA LEITURA (igual)
     // ==========================================================================
     function abrirModalEdicao(livro) {
         if (!modalEdicao) return;
@@ -406,10 +494,35 @@ document.addEventListener('DOMContentLoaded', () => {
         modalInputAutor.value = livro.autor || '';
         modalCapaImg.src = livro.capa || 'img/capapadrao.jpg';
         
+        if (btnFecharModalEdicao) {
+            btnFecharModalEdicao.onclick = () => {
+                modalEdicao.style.display = 'none';
+            };
+        }
+
+        if (btnSalvarModalEdicao) {
+            btnSalvarModalEdicao.onclick = () => {
+                const livroEditando = meusLivros.find(l => l.id === livroSendoEditadoId);
+                if (livroEditando) {
+                    livroEditando.titulo = document.getElementById('modal-input-titulo').value.trim() || livroEditando.titulo;
+                    livroEditando.autor = document.getElementById('modal-input-autor').value.trim();
+                    salvarDados();
+                    const catAtiva = document.querySelector('.categoria-item.ativo')?.dataset.categoria || 'todos';
+                    renderizarBiblioteca(catAtiva, buscaInput ? buscaInput.value : '');
+                }
+                modalEdicao.style.display = 'none';
+            };
+        }
+
+        modalEdicao.onclick = (evento) => {
+            if (evento.target === modalEdicao) {
+                modalEdicao.style.display = 'none';
+            }
+        };
+
         if (!livro.lidoRecentemente) {
             livro.lidoRecentemente = true;
             salvarDados();
-            
             const catAtiva = document.querySelector('.categoria-item.ativo')?.dataset.categoria || 'todos';
             renderizarBiblioteca(catAtiva, buscaInput ? buscaInput.value : '');
         }
@@ -417,46 +530,50 @@ document.addEventListener('DOMContentLoaded', () => {
         modalEdicao.style.display = 'flex';
     }
 
-    // Ao clicar na capa dentro do modal, abre a página de leitura passando o id do livro
     if (modalCapaImg) {
         modalCapaImg.style.cursor = 'pointer';
         modalCapaImg.title = 'Clique na capa para abrir o leitor';
-        modalCapaImg.addEventListener('click', () => {
+        modalCapaImg.onclick = () => {
             if (livroSendoEditadoId) {
-                window.location.href = `leitor.html?id=${livroSendoEditadoId}`;
+                let listaRecentes = JSON.parse(localStorage.getItem('cardsR')) || [];
+                if (!listaRecentes.includes(livroSendoEditadoId)) {
+                    listaRecentes.unshift(livroSendoEditadoId); 
+                    if (listaRecentes.length > 5) listaRecentes.pop();
+                    localStorage.setItem('cardsR', JSON.stringify(listaRecentes));
+                }
+                window.open(`leitor.html?id=${livroSendoEditadoId}`, '_blank');
             }
-        });
+        };
     }
 
-    if (btnFecharModalEdicao && modalEdicao) {
-        btnFecharModalEdicao.addEventListener('click', () => {
-            modalEdicao.style.display = 'none';
-        });
-    }
-
-    if (btnSalvarModalEdicao && modalEdicao) {
-        btnSalvarModalEdicao.addEventListener('click', () => {
-            const livro = meusLivros.find(l => l.id === livroSendoEditadoId);
-            if (livro) {
-                livro.titulo = modalInputTitulo.value.trim() || livro.titulo;
-                livro.autor = modalInputAutor.value.trim();
-                salvarDados();
-                
-                const catAtiva = document.querySelector('.categoria-item.ativo')?.dataset.categoria || 'todos';
-                renderizarBiblioteca(catAtiva, buscaInput ? buscaInput.value : '');
-            }
-            modalEdicao.style.display = 'none';
-        });
-    }
-
-    if (modalEdicao) {
-        modalEdicao.addEventListener('click', (evento) => {
-            if (evento.target === modalEdicao) {
-                modalEdicao.style.display = 'none';
-            }
-        });
-    }
-
-    // Primeira renderização ao carregar a página
     renderizarBiblioteca();
 });
+
+// ==========================================================================
+// CONTROLE DE MODO CLARO / ESCURO (PERSISTENTE) - mantido igual
+// ==========================================================================
+const btnTema = document.getElementById('btn-tema');
+const iconLua = document.querySelector('.icon-lua');
+const iconSol = document.querySelector('.icon-sol');
+
+const temaSalvo = localStorage.getItem('tema') || 'claro';
+if (temaSalvo === 'escuro') {
+    document.body.classList.add('dark-mode');
+    if (iconLua) iconLua.style.display = 'none';
+    if (iconSol) iconSol.style.display = 'block';
+}
+
+if (btnTema) {
+    btnTema.addEventListener('click', () => {
+        document.body.classList.toggle('dark-mode');
+        const modoEscuroAtivo = document.body.classList.contains('dark-mode');
+        localStorage.setItem('tema', modoEscuroAtivo ? 'escuro' : 'claro');
+        if (modoEscuroAtivo) {
+            iconLua.style.display = 'none';
+            iconSol.style.display = 'block';
+        } else {
+            iconLua.style.display = 'block';
+            iconSol.style.display = 'none';
+        }
+    });
+}

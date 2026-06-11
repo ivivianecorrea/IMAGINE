@@ -1,75 +1,86 @@
+@font-face {
+    font-family: 'roboto-thin';
+    src: url('font/Roboto-thin.ttf') format('truetype');
+}
 * {
     margin: 0;
     padding: 0;
     box-sizing: border-box;
 }
-
 body, html {
     height: 100%;
     width: 100%;
     overflow: hidden; /* Evita rolagem da página inteira */
+    background-color: #cccccc;
 }
-
 #conteudo-livro {
     width: 100%;
-    height: 100vh;      /* Ocupa toda a altura da janela */
-    overflow: auto;     /* Permite rolagem dentro do container */
-    background-color: #f2e9c8; /* Cor de fundo padrão de leitores */
+    height: calc(100vh - 36px);
+    margin-top: 36px;
+    background-color: #f2e9c8;
+    
+    /* Permite rolagem, mas esconde a barra no contêiner pai */
+    overflow-y: scroll; 
+    -ms-overflow-style: none; /* IE e Edge */
+    scrollbar-width: none;    /* Firefox */
 }
 
-/* O iframe preencherá o container */
+/* Chrome, Safari e Edge */
+#conteudo-livro::-webkit-scrollbar {
+    display: none !important;
+    width: 0 !important;
+}
+
+/* 3. Garante que o Iframe (conteúdo do livro) também não mostre barras internas */
 iframe {
-    width: 100%;
-    height: 100%;
+    width: 100% !important;
+    height: 100% !important;
     border: none;
     display: block;
+    
+    /* Aplica a mesma lógica ao iframe */
+    scrollbar-width: none !important;
 }
 
+iframe::-webkit-scrollbar {
+    display: none !important;
+    width: 0 !important;
+    height: 0 !important;
+}
 #status {
     padding: 20px;
-    color: white;
+    color: #cccccc;
     font-family: sans-serif;
 }
-
 .barra-topo {
     width: 100%;
     height: 36px;
-
-    background: #fff;
-
+    background: #09092d;
     display: flex;
     justify-content: space-between;
     align-items: center;
-
     padding: 0 20px;
     box-sizing: border-box;
-
     position: fixed;
     top: 0;
     z-index: 100;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.05);
 }
-
 .btn-voltar {
-    background: #2838a3;
-    color: #fff;
+    background: none;
     border: none;
-    border-radius: 15px;
-    padding: 8px 18px;
-    font-size: 9px;
-    font-weight: bold;
+    font-size: 20px;
     cursor: pointer;
+    color: #cccccc;
+    align-items: center;
 }
-.btn-voltar:hover { background: #09092d; }
-
 .titulo-livro {
-    margin: 0;
-    font-family: sans-serif;
-    font-size: 12px;
-    color: #09092d;
-    max-width: 60%;
+    font-family:'roboto-thin', sans-serif;
+    font-size: 14px;
+    color: #cccccc;
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
+    max-width: 60%;
+    align-items: center;
 }
-
-

@@ -5,79 +5,100 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="style.css">
     <title>IMAGINE</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.4.120/pdf.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/epub.js/0.3.93/epub.min.js"></script>
 </head>
-
-
 <body>
-<div class="menumais">
-    <div class="opcoesmais" id="escanear">Escanear Dispositivo</div>
-    <div class="opcoesmais" id="adicionar">Adicionar Manualmente</div>
-    <input type="file" id="input-arquivo" accept=".pdf,.epub" style="display: none;">
-    <button class="mais">+</button>
-</div>
-
+    <div class="menumais">
+        <div class="opcoesmais" id="escanear">Escanear Dispositivo</div>
+        <div class="opcoesmais" id="adicionar">Adicionar Manualmente</div>
+        <input type="file" id="input-arquivo" accept=".pdf,.epub" style="display: none;">
+        <input type="file" id="input-pasta" webkitdirectory directory multiple style="display: none;">
+        <button class="mais">
+            <svg class= maissvg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 12 12">
+                <path d="M0 0h12v12H0z" fill="none" />
+                <path fill="CurrentColor"  d="M6 1.75a.75.75 0 0 1 .75.75v2.75H9.5a.75.75 0 0 1 0 1.5H6.75V9.5a.75.75 0 0 1-1.5 0V6.75H2.5a.75.75 0 0 1 0-1.5h2.75V2.5A.75.75 0 0 1 6 1.75" />
+            </svg>
+        </button>
+    </div>
 
     <header class="topo-biblioteca">
         <div class="container-menu">
-            <img class="logo" src="img/logo4.svg" alt="IMAGINE" height="35">
-            <span class="Minha">Minha</span>
+<div class="logo-wrapper">
+    <svg class="logo" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 116.16 82.68">
+    <g id="logoimagine">
+        <g>
+            <path class="cls-1" d="m13.68,74.79c11.34,0,21.77,3.92,29.4,7.88-16.96-11.13-33.11-9.14-33.31-9.11l-1.35.18,1.19-7.02c-1.25-.37-2.44-.52-3.19-.58l-2.17,9.6c3.18-.66,6.34-.95,9.42-.95h0Z"/>
+            <path class="cls-1" d="m7.22,55.61l-.96-.29L22.49,3.55c-2.02-.8-3.33-1.23-4.09-1.46L0,60.88c21.66.5,38.65,12.87,47.97,21.58C32.67,63.55,7.51,55.69,7.22,55.6h0Z"/>
+            <path class="cls-1" d="m14.4,48.8c4.6,1.4,23.53,8.25,35.49,28.59-10.52-27.43-28.69-32.12-28.9-32.17l-1.05-.25.33-1.03L31.83,8.11l.79.07c4.93.42,7.93,3.46,9.42,5.53l1.75-5.02c-3.89-3.73-9.07-6.92-14.13-8.69l-15.26,48.79h0Z"/>
+        </g>
+        <g>
+            <path class="cls-1" d="m111.9,75.74l-2.17-9.6c-.75.06-1.95.21-3.19.58l1.19,7.02-1.35-.18c-.05,0-1.25-.15-3.29-.15-5.6,0-17.59,1.11-30.02,9.27,9.71-5.03,23.94-10.01,38.83-6.93h0Z"/>
+            <path class="cls-1" d="m93.67,3.56l16.23,51.77-.96.29c-.29.09-25.45,7.95-40.75,26.86,9.32-8.71,26.31-21.08,47.97-21.58L97.76,2.11c-.76.22-2.06.65-4.09,1.46h0Z"/>
+            <path class="cls-1" d="m101.76,48.8L86.5,0c-5.06,1.77-10.24,4.95-14.13,8.68l1.75,5.02c1.49-2.07,4.49-5.12,9.42-5.53l.79-.07,11.89,36.86-1.05.25c-.21.05-18.38,4.74-28.9,32.17,11.96-20.35,30.89-27.18,35.49-28.59h0Z"/>
+        </g>
+    </g>
+            <polygon class="cls-1" points="70.56 38.73 62.13 36.16 58 26.17 53.82 36.11 45.6 38.57 53.86 42.36 58.16 51.14 62.17 42.42 70.56 38.73"/>
+</svg>
+            <span class="IMAGINE">IMAGINE</span>
             <span class="Biblioteca">Biblioteca</span>
+            <button id="btn-tema" class="btn-tema" title="Alternar tema">
+            <svg class="icon-lua" viewBox="0 0 24 24" width="22" height="22" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path></svg>
+            <svg class="icon-sol" viewBox="0 0 24 24" width="22" height="22" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round" style="display: none;"><circle cx="12" cy="12" r="5"></circle><line x1="12" y1="1" x2="12" y2="3"></line><line x1="12" y1="21" x2="12" y2="23"></line><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line><line x1="1" y1="12" x2="3" y2="12"></line><line x1="21" y1="12" x2="23" y2="12"></line><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line></svg>
+            </button>
+        </div>
         </div>
     </header>
 
-
-<form action="#" class="formb">
+    <form action="#" class="formb">
         <button type="submit" class="botaob">
-            <img class="lupa" src="img/lupa.svg" alt="buscar">
-        </button>
+    <svg class="lupa" viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2">
+        <circle cx="10" cy="10" r="7"></circle>
+        <line x1="15" y1="15" x2="21" y2="21"></line>
+    </svg>
+</button>
         <input type="text" class="busca" placeholder="Buscar livros..."> 
     </form>
     
-
     <section id="recentes">
         <h2 class="recentes">Recentes</h2>
-        <div class="cardsR" id="todoscardsR">
-            <div class="card">
-                <div class="capa-container">
-                    <div class="info-container">
-                        <h3 class="titulo"></h3>
-                    </div>
-                    </div>
-                </div>
-            </div>
-        </div>
+        <div class="cardsR" id="todoscardsR"></div>
     </section>
 
-
     <div class="linha-categorias-filtros">
-    <div class="categoriascontainer">
-        <button class="categoria-item ativo" data-categoria="todos">Todos</button>
-        <button class="categoria-item" data-categoria="lendo">Lendo</button>
-        <button class="categoria-item" data-categoria="relendo">Relendo</button>
-        <button class="categoria-item" data-categoria="quero-ler">Quero Ler</button>
-        <button class="categoria-item" data-categoria="finalizados">Finalizados</button>
-        <button class="categoria-item" data-categoria="abandonados">Abandonados</button>
-        <button class="categoria-item" data-categoria="favoritos">Favoritos</button>
+        <div class="categoriascontainer">
+            <button class="categoria-item ativo" data-categoria="todos">Todos</button>
+            <button class="categoria-item" data-categoria="lendo">Lendo</button>
+            <button class="categoria-item" data-categoria="relendo">Relendo</button>
+            <button class="categoria-item" data-categoria="quero-ler">Quero Ler</button>
+            <button class="categoria-item" data-categoria="finalizados">Finalizados</button>
+            <button class="categoria-item" data-categoria="abandonados">Abandonados</button>
+            <button class="categoria-item" data-categoria="favoritos">Favoritos</button>
+        </div>
+        
+        <div class="acoes-direita-container" style="position: relative;">
+            <button class="btn-acao-topo btn-filtro-secao" id="btn-filtro" title="Filtrar biblioteca">
+                <svg viewBox="0 0 24 24" width="20" height="20" stroke="currentColor" stroke-width="2" fill="none" d="..."><polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3"/></svg>
+            </button>
+            <button class="btn-acao-topo btn-lixeira-secao" title="Lixeira" id="btn-lixeira-secao"> 
+                <svg viewBox="0 0 24 24" width="20" height="20" stroke="currentColor" stroke-width="2" fill="none" d="..."><path d="M3 6h18M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>
+            </button>
+
+            <div class="balao-filtro" id="balao-filtro">
+                <div class="opcao-filtro ativa" data-ordem="padrao">Padrão</div>
+                <div class="opcao-filtro" data-ordem="az">Ordem: A - Z</div>
+                <div class="opcao-filtro" data-ordem="za">Ordem: Z - A</div>
+            </div>
+        </div>
     </div>
-    <div class="acoes-direita-container">
-        <button class="btn-acao-topo btn-filtro-secao" title="Filtrar biblioteca">
-            <svg viewBox="0 0 24 24" width="20" height="20" stroke="currentColor" stroke-width="2" fill="none"><polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3"/></svg>
-        </button>
-        <button class="btn-acao-topo btn-lixeira-secao" title="Lixeira" id="btn-lixeira-secao"> 
-            <svg viewBox="0 0 24 24" width="20" height="20" stroke="currentColor" stroke-width="2" fill="none"><path d="M3 6h18M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>
-        </button>
+
+    <div class="cardsC" id="todoscardsC"></div>
+
+    <div class="container-acoes-lixeira" id="container-acoes-lixeira" style="display: none;">
+        <button class="btn-selecionar-tudo" id="btn-selecionar-tudo">Selecionar Tudo</button>
+        <button class="btn-deletar-secao" id="btn-deletar-selecionados">Deletar Selecionados</button>
     </div>
-</div>
 
-<div class="cardsC" id="todoscardsC"></div>
-
-<div class="container-acoes-lixeira" id="container-acoes-lixeira" style="display: none;">
-    <button class="btn-selecionar-tudo" id="btn-selecionar-tudo">Selecionar Tudo</button>
-    <button class="btn-deletar-secao" id="btn-deletar-selecionados">Deletar Selecionados</button>
-</div>
-
-
-    <!-- MODAL DE EDIÇÃO DO LIVRO -->
     <div class="modal-overlay" id="modal-edicao-livro" style="display: none;">
         <div class="modal-conteudo">
             <button class="btn-fechar-modal" id="btn-fechar-modal-livro">✕</button>
@@ -98,30 +119,56 @@
         </div>
     </div>
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
     <nav class="aba-inferior">
         <a href="index.html" class="aba-item ativo"><span>Início</span></a>
         <a href="Explorar.html" class="aba-item"><span>Explorar</span></a>
         <a href="Moedas.html" class="aba-item"><span>Moedas</span></a>
         <a href="Perfil.html" class="aba-item"><span>Perfil</span></a>
     </nav>
+
+    <template id="template-card-recente">
+        <div class="card card-recente">
+            <div class="card-recente-conteudo">
+                <img class="card-recente-capa" src="" alt="Capa">
+                <div class="card-recente-info">
+                    <h3 class="card-recente-titulo"></h3>
+                    <p class="card-recente-autor"></p>
+                </div>
+            </div>
+        </div>
+    </template>
+
+    <template id="template-card-principal">
+        <div class="card card-livro-individual">
+            <div class="capa-container">
+                <img class="capa-livro" src="" alt="Capa do Livro" loading="lazy">
+                <div class="menu-categorias-capa">
+                    <button class="btn-cat cat-lendo" title="Lendo" data-cat="lendo">
+                        <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"></path><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"></path></svg>
+                    </button>
+                    <button class="btn-cat cat-relendo" title="Relendo" data-cat="relendo">
+                        <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 4 23 10 17 10"></polyline><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"></path></svg>
+                    </button>
+                    <button class="btn-cat cat-quero-ler" title="Quero Ler" data-cat="quero-ler">
+                        <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"></path></svg>
+                    </button>
+                    <button class="btn-cat cat-finalizados" title="Finalizados" data-cat="finalizados">
+                        <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>
+                    </button>
+                    <button class="btn-cat cat-abandonados" title="Abandonados" data-cat="abandonados">
+                        <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+                    </button>
+                    <button class="btn-cat cat-favoritos" title="Favoritos" data-cat="favoritos">
+                        <svg viewBox="0 0 24 24" width="14" height="14" fill="currentColor"><path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"/></svg>
+                    </button>
+                </div>
+            </div>
+            <div class="card-info">
+                <h3 class="titulo"></h3>
+                <p class="card-principal-autor"></p>
+            </div>
+        </div>
+    </template>
 
     <script src="script.js"></script>
 </body>
