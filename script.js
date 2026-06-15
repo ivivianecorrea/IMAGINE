@@ -17,6 +17,8 @@ document.addEventListener('DOMContentLoaded', () => {
     // 1. INICIALIZAÇÃO DE DADOS
     // ==========================================================================
     let meusLivros = JSON.parse(localStorage.getItem('minhaBiblioteca')) || [];
+    // Limpar possíveis entradas nulas ou corrompidas
+    meusLivros = meusLivros.filter(livro => livro && livro.id && livro.titulo);
     let modoExclusaoAtivo = false;
     let livrosSelecionados = [];
 
@@ -31,7 +33,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const containerCardsR = document.getElementById('todoscardsR');
     const btnDeletarSelecionados = document.getElementById('btn-deletar-selecionados');
     const inputArquivo = document.getElementById('input-arquivo');
-    const inputPasta = document.getElementById('input-pasta');  // NOVO
+    const inputPasta = document.getElementById('input-pasta');
     const buscaInput = document.querySelector('.busca');
     const formBusca = document.querySelector('.formb');
     const botoesCategoria = document.querySelectorAll('.categoria-item');
@@ -55,29 +57,31 @@ document.addEventListener('DOMContentLoaded', () => {
     // 3. FUNÇÃO REUTILIZÁVEL PARA ADICIONAR UM ARQUIVO (PDF/EPUB)
     // ==========================================================================
     async function adicionarLivroPorArquivo(arquivo, idUnico) {
-        return new Promise(async (resolve, reject) => {
-            const extensao = arquivo.name.split('.').pop().toLowerCase();
-            let capaBase64 = 'img/capapadrao.jpg';
-
-            // Extrair capa
-            try {
-                if (extensao === 'pdf') {
-                    const arrayBuffer = await arquivo.arrayBuffer();
-                    const pdf = await pdfjsLib.getDocument({ data: arrayBuffer }).promise;
-                    const page = await pdf.getPage(1);
-                    const viewport = page.getViewport({ scale: 0.5 });
-                    const canvas = document.createElement('canvas');
-                    const context = canvas.getContext('2d');
-                    canvas.height = viewport.height;
-                    canvas.width = viewport.width;
-                    await page.render({ canvasContext: context, viewport: viewport }).promise;
-                    capaBase64 = canvas.toDataURL('image/jpeg');
-                } 
-                else if (extensao === 'epub') {
-                    const arrayBuffer = await arquivo.arrayBuffer();
-                    const book = ePub(arrayBuffer);
+        const extensao = arquivo.name.split('.').pop().toLowerCase();
+        let capaBase64 = 'img/capapadrao.jpg';
+        
+        try {
+            if (extensao === 'pdf') {
+                const arrayBuffer = await arquivo.arrayBuffer();
+                const pdf = await pdfjsLib.getDocument({ data: arrayBuffer }).promise;
+                const page = await pdf.getPage(1);
+                const viewport = page.getViewport({ scale: 0.5 });
+                const canvas = document.createElement('canvas');
+                const context = canvas.getContext('2d');
+                canvas.height = viewport.height;
+                canvas.width = viewport.width;
+                await page.render({ canvasContext: context, viewport: viewport }).promise;
+                capaBase64 = canvas.toDataURL('image/jpeg');
+            } 
+            else if (extensao === 'epub') {               
+                const arrayBuffer = await arquivo.arrayBuffer();
+                const book = ePub(arrayBuffer);
+                
+                // 1. Tenta pegar a capa padrão (coverUrl)
+                let capaEncontrada = false;
+                try {
                     let coverUrl = await book.coverUrl();
-                    if (!coverUrl) {
+                                        if (!coverUrl) {
                         await book.ready;
                         const coverItem = book.resources.replacementUrls.find(url => 
                             url.includes('cover') || url.includes('Capa') || url.includes('capa')
@@ -92,19 +96,37 @@ document.addEventListener('DOMContentLoaded', () => {
                     }
                     if (coverUrl) {
                         const resposta = await fetch(coverUrl);
-                        const blob = await resposta.blob();
-                        capaBase64 = await new Promise((resolve) => {
-                            const leitor = new FileReader();
-                            leitor.onloadend = () => resolve(leitor.result);
-                            leitor.readAsDataURL(blob);
-                        });
+                        if (resposta.ok) {
+                            const blob = await resposta.blob();
+                            capaBase64 = await new Promise((resolve) => {
+                                const leitor = new FileReader();
+                                leitor.onloadend = () => resolve(leitor.result);
+                                leitor.readAsDataURL(blob);
+                            });
+                            capaEncontrada = true;
+                            console.log("Capa extraída dos metadados.");
+                        }
+                    }
+                } catch(e) { console.warn("Erro ao extrair capa padrão", e); }
+                
+                // 2. Se não conseguiu capa, tenta capturar a primeira página renderizada
+                if (!capaEncontrada) {
+                    console.log("Tentando capturar primeira página do EPUB...");
+                    const capaCapturada = await capturarPrimeiraPaginaEpub(book);
+                    if (capaCapturada && capaCapturada !== 'img/capapadrao.jpg') {
+                        capaBase64 = capaCapturada;
+                        console.log("Capa capturada com sucesso!");
+                    } else {
+                        console.warn("Falha na captura, usando capa padrão.");
                     }
                 }
-            } catch (err) {
-                console.warn("Erro ao extrair capa de", arquivo.name, err);
             }
-
-            // Salvar no IndexedDB
+        } catch (err) {
+            console.warn("Erro ao extrair capa de", arquivo.name, err);
+        }
+        
+        // Salvar no IndexedDB
+        return new Promise((resolve, reject) => {
             const reqDB = indexedDB.open("BibliotecaArquivos", 1);
             reqDB.onsuccess = (eventoDB) => {
                 const db = eventoDB.target.result;
@@ -129,6 +151,95 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
+    // Função auxiliar para capturar a primeira página do EPUB
+    async function capturarPrimeiraPaginaEpub(book) {
+        return new Promise(async (resolve) => {
+            const container = document.createElement('div');
+            container.style.position = 'absolute';
+            container.style.top = '-9999px';
+            container.style.left = '-9999px';
+            container.style.width = '800px';
+            container.style.height = '1000px';
+            container.style.overflow = 'hidden';
+            container.style.backgroundColor = '#ffffff';
+            document.body.appendChild(container);
+            
+            let timeoutId;
+            try {
+                // Aguarda o livro estar pronto
+                await book.ready;
+                const spine = book.spine;
+                const firstItem = spine.get(0);
+                if (!firstItem || !firstItem.href) throw new Error("Nenhum capítulo encontrado");
+                
+                // Renderiza o primeiro capítulo
+                const rendition = book.renderTo(container, {
+                    width: 800,
+                    height: 1000,
+                    flow: "paginated"
+                });
+                
+                // Promise para aguardar o display com timeout
+                await Promise.race([
+                    rendition.display(firstItem.href),
+                    new Promise((_, reject) => timeoutId = setTimeout(() => reject(new Error("Timeout display")), 10000))
+                ]);
+                clearTimeout(timeoutId);
+                
+                // Aguarda o iframe ser criado e carregado
+                let iframe = container.querySelector('iframe');
+                if (!iframe) {
+                    await new Promise(r => setTimeout(r, 500));
+                    iframe = container.querySelector('iframe');
+                }
+                if (!iframe || !iframe.contentDocument) throw new Error("Iframe não disponível");
+                
+                // Aguarda o carregamento completo do conteúdo
+                await new Promise((resolveIframe, rejectIframe) => {
+                    const doc = iframe.contentDocument;
+                    if (doc.readyState === 'complete') {
+                        resolveIframe();
+                    } else {
+                        const loadHandler = () => resolveIframe();
+                        const errorHandler = () => rejectIframe(new Error("Falha no carregamento"));
+                        iframe.addEventListener('load', loadHandler, { once: true });
+                        iframe.addEventListener('error', errorHandler, { once: true });
+                        setTimeout(() => {
+                            iframe.removeEventListener('load', loadHandler);
+                            iframe.removeEventListener('error', errorHandler);
+                            rejectIframe(new Error("Timeout no carregamento do iframe"));
+                        }, 8000);
+                    }
+                });
+                
+                // Delay extra para renderização completa
+                await new Promise(r => setTimeout(r, 1000));
+                
+                // Verifica se html2canvas está disponível
+                if (typeof html2canvas === 'undefined') {
+                    throw new Error("html2canvas não carregada");
+                }
+                
+                // Captura com html2canvas
+                const canvas = await html2canvas(iframe.contentDocument.body, {
+                    scale: 0.6,
+                    backgroundColor: '#ffffff',
+                    logging: false,
+                    useCORS: true,
+                    allowTaint: false
+                });
+                const dataURL = canvas.toDataURL('image/jpeg', 0.8);
+                resolve(dataURL);
+            } catch (err) {
+                console.warn("Falha ao capturar primeira página do EPUB", err);
+                resolve('img/capapadrao.jpg');
+            } finally {
+                if (timeoutId) clearTimeout(timeoutId);
+                if (container && container.parentNode) document.body.removeChild(container);
+            }
+        });
+    }
+
     // ==========================================================================
     // 4. RENDERIZAÇÃO INTERNA OTIMIZADA
     // ==========================================================================
@@ -142,7 +253,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
         const termoMin = termoBusca.toLowerCase().trim();
 
-        const livrosFiltrados = meusLivros.filter(livro => {
+            const livrosFiltrados = meusLivros.filter(livro => {
+                if (!livro || !livro.titulo) return false; // proteção
             const correspondeCategoria = categoriaFiltro === 'todos' || 
                                          (categoriaFiltro === 'favoritos' ? livro.favorito === true : livro.categoria === categoriaFiltro);
             const correspondeBusca = livro.titulo.toLowerCase().includes(termoMin) || 
@@ -159,7 +271,7 @@ document.addEventListener('DOMContentLoaded', () => {
         if (containerCardsR) {
             const templateRecente = document.getElementById('template-card-recente');
             const ultimosRecentes = meusLivros
-                .filter(livro => livro.lidoRecentemente === true)
+                .filter(livro => livro && livro.lidoRecentemente === true)
                 .reverse()
                 .slice(0, 4); 
 
@@ -226,30 +338,37 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     function salvarDados() {
-        localStorage.setItem('minhaBiblioteca', JSON.stringify(meusLivros));
+        // Salva apenas livros válidos
+        const validos = meusLivros.filter(l => l && l.id && l.titulo);
+        localStorage.setItem('minhaBiblioteca', JSON.stringify(validos));
     }
 
-    // ==========================================================================
-    // 5. EVENTO PARA ADICIONAR ARQUIVO ÚNICO (mantido)
-    // ==========================================================================
-    if (inputArquivo) {
-        inputArquivo.addEventListener('change', async (e) => {
-            const arquivo = e.target.files[0];
-            if (!arquivo) return;
-            const idNovo = Date.now().toString();
-            try {
-                const novoLivro = await adicionarLivroPorArquivo(arquivo, idNovo);
+ // ==========================================================================
+// 5. EVENTO PARA ADICIONAR ARQUIVO ÚNICO
+// ==========================================================================
+if (inputArquivo) {
+    inputArquivo.addEventListener('change', async (e) => {
+        const arquivo = e.target.files[0];
+        if (!arquivo) return;
+        const idNovo = Date.now().toString();
+        try {
+            const novoLivro = await adicionarLivroPorArquivo(arquivo, idNovo);
+            if (novoLivro) {
                 meusLivros.unshift(novoLivro);
                 salvarDados();
                 renderizarBiblioteca();
-            } catch (err) {
-                console.error("Erro ao adicionar arquivo:", err);
-                alert("Falha ao adicionar o arquivo.");
+            } else {
+                alert("Falha ao processar o arquivo. Verifique se a biblioteca EPUB.js foi carregada.");
             }
-            inputArquivo.value = '';
-        });
-    }
-
+        } catch (err) {
+            console.error("Erro ao adicionar arquivo:", err);
+            alert("Falha ao adicionar o arquivo.");
+        }
+        inputArquivo.value = '';
+    });
+}
+    
+    inputArquivo.value = '';
     // ==========================================================================
     // 6. ESCANEAMENTO DE PASTA (vários arquivos)
     // ==========================================================================
@@ -266,7 +385,6 @@ document.addEventListener('DOMContentLoaded', () => {
                 return;
             }
 
-            // Desabilitar o botão durante o processo (opcional)
             const escanearBtn = document.getElementById('escanear');
             if (escanearBtn) escanearBtn.style.pointerEvents = 'none';
             
@@ -275,11 +393,12 @@ document.addEventListener('DOMContentLoaded', () => {
                 const idUnico = Date.now() + '_' + contador + '_' + Math.random().toString(36).substr(2, 5);
                 try {
                     const novoLivro = await adicionarLivroPorArquivo(arquivo, idUnico);
-                    meusLivros.unshift(novoLivro);
-                    salvarDados();
-                    // Re-renderiza a cada adição (ou pode fazer apenas no final)
-                    renderizarBiblioteca();
-                    contador++;
+                    if (novoLivro) {
+                        meusLivros.unshift(novoLivro);
+                        salvarDados();
+                        renderizarBiblioteca();
+                        contador++;
+                    }
                 } catch (err) {
                     console.error("Erro ao adicionar", arquivo.name, err);
                 }
@@ -287,7 +406,7 @@ document.addEventListener('DOMContentLoaded', () => {
             
             if (escanearBtn) escanearBtn.style.pointerEvents = 'auto';
             alert(`${contador} livro(s) adicionado(s) com sucesso!`);
-            inputPasta.value = ''; // limpa para permitir nova seleção
+            inputPasta.value = '';
         });
     }
 
@@ -303,7 +422,6 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    // Ações do Filtro Dropdown (igual ao original)
     if (btnFiltro && balaoFiltro) {
         btnFiltro.addEventListener('click', (e) => {
             e.stopPropagation(); 
@@ -340,7 +458,6 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    // Escanear dispositivo: abrir seletor de pasta
     if (btnEscanear && inputPasta) {
         btnEscanear.addEventListener('click', (evento) => {
             evento.stopPropagation();
@@ -367,33 +484,31 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     // ==========================================================================
-    // 8. MODO DE EXCLUSÃO (mantido igual)
+    // 8. MODO DE EXCLUSÃO
     // ==========================================================================
     const containerAcoesLixeira = document.getElementById('container-acoes-lixeira');
     const btnSelecionarTudo = document.getElementById('btn-selecionar-tudo');
 
     if (btnLixeiraSecao) {
-    btnLixeiraSecao.addEventListener('click', () => {
-        modoExclusaoAtivo = !modoExclusaoAtivo;
-        livrosSelecionados = [];
+        btnLixeiraSecao.addEventListener('click', () => {
+            modoExclusaoAtivo = !modoExclusaoAtivo;
+            livrosSelecionados = [];
 
-        if (modoExclusaoAtivo) {
-            // Modo ativo: aplica estilo inline apenas para destacar (opcional)
-            btnLixeiraSecao.style.color = '#c62222';
-            btnLixeiraSecao.style.backgroundColor = 'transparent';
-            if (containerAcoesLixeira) containerAcoesLixeira.style.display = 'flex';
-            if (btnSelecionarTudo) btnSelecionarTudo.textContent = 'Selecionar Tudo';
-        } else {
-            // Remove os estilos inline para voltar ao CSS original
-            btnLixeiraSecao.style.color = '';
-            btnLixeiraSecao.style.backgroundColor = '';
-            if (containerAcoesLixeira) containerAcoesLixeira.style.display = 'none';
-        }
+            if (modoExclusaoAtivo) {
+                btnLixeiraSecao.style.color = '#c62222';
+                btnLixeiraSecao.style.backgroundColor = 'transparent';
+                if (containerAcoesLixeira) containerAcoesLixeira.style.display = 'flex';
+                if (btnSelecionarTudo) btnSelecionarTudo.textContent = 'Selecionar Tudo';
+            } else {
+                btnLixeiraSecao.style.color = '';
+                btnLixeiraSecao.style.backgroundColor = '';
+                if (containerAcoesLixeira) containerAcoesLixeira.style.display = 'none';
+            }
 
-        const catAtiva = document.querySelector('.categoria-item.ativo')?.dataset.categoria || 'todos';
-        renderizarBiblioteca(catAtiva, buscaInput ? buscaInput.value : '');
-    });
-}
+            const catAtiva = document.querySelector('.categoria-item.ativo')?.dataset.categoria || 'todos';
+            renderizarBiblioteca(catAtiva, buscaInput ? buscaInput.value : '');
+        });
+    }
 
     if (btnSelecionarTudo) {
         btnSelecionarTudo.addEventListener('click', () => {
@@ -401,6 +516,7 @@ document.addEventListener('DOMContentLoaded', () => {
             const termoBusca = buscaInput ? buscaInput.value.toLowerCase() : '';
             
             const livrosVisiveis = meusLivros.filter(livro => {
+                if (!livro || !livro.titulo) return false;
                 const correspondeCategoria = catAtiva === 'todos' || 
                                              (catAtiva === 'favoritos' ? livro.favorito === true : livro.categoria === catAtiva);
                 const correspondeBusca = livro.titulo.toLowerCase().includes(termoBusca) || 
@@ -444,6 +560,7 @@ document.addEventListener('DOMContentLoaded', () => {
             const termoBusca = buscaInput ? buscaInput.value.toLowerCase() : '';
             
             const livrosVisiveis = meusLivros.filter(l => {
+                if (!l || !l.titulo) return false;
                 const correspondeCategoria = catAtiva === 'todos' || 
                                              (catAtiva === 'favoritos' ? l.favorito === true : l.categoria === catAtiva);
                 return correspondeCategoria && 
@@ -472,10 +589,10 @@ document.addEventListener('DOMContentLoaded', () => {
                         livrosSelecionados = [];
                         modoExclusaoAtivo = false;
                         if (containerAcoesLixeira) containerAcoesLixeira.style.display = 'none';
-                       if (btnLixeiraSecao) {
-    btnLixeiraSecao.style.color = '';
-    btnLixeiraSecao.style.backgroundColor = '';
-}
+                        if (btnLixeiraSecao) {
+                            btnLixeiraSecao.style.color = '';
+                            btnLixeiraSecao.style.backgroundColor = '';
+                        }
                         const catAtiva = document.querySelector('.categoria-item.ativo')?.dataset.categoria || 'todos';
                         renderizarBiblioteca(catAtiva, buscaInput ? buscaInput.value : '');
                     };
@@ -485,7 +602,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     // ==========================================================================
-    // 9. CONTROLE DO MODAL DE EDIÇÃO E DIREÇÃO PARA LEITURA (igual)
+    // 9. CONTROLE DO MODAL DE EDIÇÃO
     // ==========================================================================
     function abrirModalEdicao(livro) {
         if (!modalEdicao) return;
@@ -546,11 +663,21 @@ document.addEventListener('DOMContentLoaded', () => {
         };
     }
 
+    // Verificar se a biblioteca ePub.js foi carregada, se não tentar carregar dinamicamente
+    if (typeof ePub === 'undefined') {
+        console.warn("ePub.js não carregada, tentando carregar dinamicamente...");
+        const script = document.createElement('script');
+        script.src = 'https://cdn.jsdelivr.net/npm/epubjs@0.3.93/dist/epub.min.js';
+        script.onload = () => console.log("ePub.js carregada dinamicamente.");
+        script.onerror = () => console.error("Falha ao carregar ePub.js");
+        document.head.appendChild(script);
+    }
+
     renderizarBiblioteca();
 });
 
 // ==========================================================================
-// CONTROLE DE MODO CLARO / ESCURO (PERSISTENTE) - mantido igual
+// CONTROLE DE MODO CLARO / ESCURO (PERSISTENTE)
 // ==========================================================================
 const btnTema = document.getElementById('btn-tema');
 const iconLua = document.querySelector('.icon-lua');

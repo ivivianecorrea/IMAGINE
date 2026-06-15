@@ -33,12 +33,12 @@ body {
    MENU SUPERIOR / HEADER
    ========================================================================== */
 .logo {
-    height: 45px !important;
+    height: 40px !important;
     width: auto !important;
-    margin: 11px;
+    margin: 14px;
 }
 .logo .cls-1 {
-    fill: #1b2774;  /* mesma cor original */
+    fill: #2f3b8b;  /* mesma cor original */
 }
 
 .container-menu {
@@ -55,17 +55,17 @@ body {
 }
 .IMAGINE {
     font-family: 'roboto-black', sans-serif;
-    color: #1b2774;
-    font-size: 19px;
-    margin-left: 1px;
-    margin-top: 9px;
+    color: #2f3b8b;
+    font-size: 17px;
+    margin-left: -5px;
+    margin-top: 15px;
 }
 .Biblioteca {
     font-family: 'roboto-black', sans-serif;
-    color: #0e174f;
-    font-size: 15px;
-    margin-left: -72px;
-    margin-top: 32px;
+    color: #6371c8;
+    font-size: 11px;
+    margin-left: -67px;
+    margin-top: 33px;
 }
 
 /* ==========================================================================
@@ -90,10 +90,12 @@ body {
     font-size: 0.8rem;
     height: 25px;
     border-radius: 0px 50px 50px 0px; 
-    color:#1b2774 ;
+    color:#0f184f ;
+    border: none;
 }
 .busca::placeholder {
-    color: #1b2774;
+    color: #6e749b;
+    border: none;
 }
 .botaob {
     background-color: #bdc4e3;
@@ -111,7 +113,7 @@ body {
     align-items: center;
     position: center;
     display: flex;
-    color: #1b2774;
+    color: #6e749b;
 }
 
 
@@ -135,19 +137,20 @@ body {
     align-items: center;
     justify-content: center;
     font-family: 'roboto-black', sans-serif;
-    background-color: #1b2774;
+    background-color: #6371c8;
     color: #bdc4e3;
     transition: transform 0.2s ease, background-color 0.2s ease;
 }
 .mais:hover {
-    background-color: #0e174f;
+    background-color: #2f3b8b;
+    color: #bdc4e3;
     transform: scale(1.05); 
 }
 .opcoesmais {
     position: absolute;
     right: 0;
-    background-color: #1b2774;
-    color: #606890;
+    background-color: #bdc4e3;
+    color: #6371c8;
     padding: 8px 10px;
     border-radius: 15px;
     font-size: 10px;
@@ -157,7 +160,7 @@ body {
     pointer-events: auto;
 }
 .opcoesmais:hover {
-    background-color: #0e174f;
+    background-color: #6371c8;
     color: #bdc4e3;
     transform: scale(1.01); 
     font-family: 'roboto-medium', sans-serif;
@@ -173,10 +176,10 @@ body {
    SEÇÕES DE CARDS (RECENTES E PRINCIPAL)
    ========================================================================== */
 .recentes {
-    font-family: 'roboto-light', sans-serif;
-    font-size: 15px;
-    color: #0e174f;
-    margin-left: 11px;
+    font-family: 'roboto-medium', sans-serif;
+    font-size: 13px;
+    color: #2f3b8b;
+    margin-left: 14px;
     margin-top: 15px;
 }
 .cardsR .card:hover {
@@ -222,7 +225,7 @@ body {
 }
 .card-recente-titulo {
     font-size: 10px !important;
-    color: #070729;
+    color: #2f3b8b;
     display:block;
     -webkit-column-break-inside: 2;
     -webkit-box-orient:vertical;
@@ -231,7 +234,7 @@ body {
 .card-recente-autor{
     font-size: 7px !important; 
     margin: 0; 
-    color: #1b2774 !important;
+    color: #6e749b !important;
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
@@ -288,7 +291,7 @@ body {
 }
 
 /* ==========================================================================
-   CATEGORIAS, BADGES E FILTROS
+   CATEGORIAS
    ========================================================================== */
 .linha-categorias-filtros {
     display: flex;
@@ -312,7 +315,7 @@ body {
 .categoria-item {
     font-family: 'roboto-medium', sans-serif;
     background-color: #bdc4e3;
-    color: #1b2774;
+    color: #6e749b;
     padding: 8px 15px;
     border-radius: 20px;
     font-size: 8px;
@@ -320,14 +323,14 @@ body {
     border: none;
 }
 .categoria-item:hover {
-    background-color: #1b2774;
+    background-color: #6371c8;
     color: #bdc4e3;
     font-family: 'roboto-black', sans-serif;
     transform: scale(1.03);
 }
 .categoria-item.ativo {
-    background-color: #bdc4e3;
-    color: #1b2774;
+    background-color: #6371c8;
+    color: #bdc4e3;
     font-family: 'roboto-black', sans-serif;
     border-bottom: 2px solid currentColor;
 }
@@ -377,7 +380,7 @@ body {
 .titulo{
     font-size: 12px !important;
     margin-top: 3px !important; 
-    color: #09092d;
+    color: #2f3b8b;
     white-space: normal;
     display: -webkit-box;
     -webkit-line-clamp: 2;       /* Define o limite máximo de 2 linhas */
@@ -389,7 +392,7 @@ body {
 .card-principal-autor{
     font-size: 9px !important; 
     margin-top: 2px; 
-    color: #1b2774;
+    color: #6e749b;
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
@@ -449,18 +452,18 @@ body {
 }
 
 /* ==========================================================================
-   Estilo do Balão de Filtros
+Filtros
    ========================================================================== */
 .acoes-direita-container {
     display: flex;
     align-items: center;
-    gap: 14px;
+    gap: 10px;
     flex-shrink: 0;
 }
 .btn-acao-topo {
     background: none;
     border: none;
-    color: #1b2774;
+    color: #6371c8;
     cursor: pointer;
     display: flex;
     align-items: center;
@@ -470,19 +473,16 @@ body {
     margin-right: -5px;
 }
 .btn-acao-topo:hover {
-    color: #0e174f;
+    color: #2f3b8b;
     transform: scale(1.08);
-}
-.btn-acao-topo.ativo{
-   color: #555e85;
 }
 .balao-filtro {
     display: none; /* Escondido por padrão */
     position: absolute;
     top: 115%;     /* Posiciona logo abaixo do botão */
     right: 0;      /* Alinha com o canto direito do botão */
-    background-color: #1b2774; /* Tom azul-escuro igual à sua aba inferior */
-    color: #606890;
+    background-color: #bdc4e3; /* Tom azul-escuro igual à sua aba inferior */
+    color: #2f3b8b;
     border-radius: 8px;
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
     padding: 6px 0;
@@ -508,32 +508,24 @@ body {
 
 /* Efeito ao passar o mouse nas opções */
 .opcao-filtro:hover {
-    background-color: #bdc4e3; /* Tom ligeiramente mais claro */
+    background-color: #6371c8; /* Tom ligeiramente mais claro */
     font-family: 'roboto-black', sans-serif;
-    color: #1b2774;
+    color: #bdc4e3;
 }
 
 /* Destaque visual para a opção selecionada atualmente */
 .opcao-filtro.ativa {
-    color: #1b2774; /* Cor verde/ciano para destacar o filtro ativo */
-    background-color: #bdc4e3;
+    color: #bdc4e3; /* Cor verde/ciano para destacar o filtro ativo */
+    background-color: #6371c8;
     font-family: 'roboto-black', sans-serif;
 }
-.btn-acao-topo-btn-filtro-secao {
-color: #1b2774 !important;
-}
-.btn-acao-topo-btn-filtro-secao.ativo {
-color: #0e174f !important;
-}
-.btn-acao-topo-btn-filtro-secao:hover {
-color: #0e174f !important;
-}
+
 /* ==========================================================================
    LIXEIRA E MODO EXCLUSÃO
    ========================================================================== */
 #btn-lixeira-secao {
-    margin-right: -17px;
-    color: #1b2774
+    margin-right:7px;
+    border-color: #2f3b8b !important;
 }
 #btn-lixeira-secao:hover {
     color: #c62222 !important;
@@ -547,8 +539,8 @@ color: #0e174f !important;
     z-index: 5000;
 }
 .btn-selecionar-tudo {
-    background-color: #1b2774;
-    color: #e6e5e5;
+    background-color: #bdc4e3;
+    color: #2f3b8b;
     border: none;
     padding: 8px 10px;
     border-radius: 20px;
@@ -558,14 +550,15 @@ color: #0e174f !important;
     transition: background-color 0.2s, transform 0.2s;
 }
 .btn-selecionar-tudo:hover {
-    background-color: #0f184f;
+    background-color: #2f3b8b;
+    color: #bdc4e3;
     transform: scale(1.01);
     font-family: 'roboto-bold', sans-serif;
 }
 .btn-deletar-secao {
     position: static; 
-    background-color: #c62222;
-    color: #e6e5e5;
+    background-color: #bdc4e3;
+    color: #c62222;
     border: none;
     padding: 8px 10px;
     border-radius: 20px;
@@ -576,7 +569,7 @@ color: #0e174f !important;
 }
 .btn-deletar-secao:hover {
 background-color: #9b1d0f;
-color: #e6e5e5;
+color: #bdc4e3;
  transform: scale(1.01);
  font-family: 'roboto-bold', sans-serif;
 }
@@ -594,7 +587,7 @@ color: #e6e5e5;
 .modal-overlay {
     position: fixed;
     top: 0; left: 0; right: 0; bottom: 0;
-    background-color: rgba(0, 0, 0, 0.5);
+    background-color: #00000080;
     display: flex;
     justify-content: center;
     align-items: center;
@@ -603,7 +596,7 @@ color: #e6e5e5;
 }
 .modal-conteudo {
     background-color: #e6e5e5;
-    color:#0e174f;
+    color:#2f3b8b;
     border-radius: 12px;
     display: flex;
     max-width: 500px;
@@ -626,13 +619,13 @@ color: #e6e5e5;
     position: absolute;
     top: 7px; left: 9px;
     background: none; border: none;
-    font-size: 20px; color: #1b2774;
+    font-size: 20px; color: #6371c8;
     cursor: pointer; padding: 0;
     width: 32px; height: 32px;
     display: flex; align-items: center; justify-content: center;
     transition: color 0.2s; z-index: 10;
 }
-.btn-fechar-modal:hover { color: #0e174f; }
+.btn-fechar-modal:hover { color: #2f3b8b; }
 .modal-capa {
     width: 180px;
     max-width: 190px;
@@ -651,29 +644,35 @@ color: #e6e5e5;
     margin-right: 20px;
     margin-top: 40px;
 }
-.modal-campo { display: flex; flex-direction: column; gap: 5px; }
+.modal-campo {
+    display: flex;
+    flex-direction: column;
+    gap: 5px; 
+    font-family: 'roboto-medium', sans-serif;
+}
 .modal-campo label {
-    font-family: 'roboto-black', sans-serif;
-    font-size: 14px; color: #101643; font-weight: 500;
+    font-family: 'roboto-medium', sans-serif;
+    font-size: 14px; color: #2f3b8b; font-weight: 500;
 }
 .modal-campo input {
-    padding: 10px 12px; border: 1px solid #1b2774;
+    padding: 10px 12px; border: none;
     border-radius: 6px; font-size: 12px; font-family: sans-serif;
     transition: border-color 0.2s;
-    color: #1b2774;
+    color: #2f3b8b;
     background-color: #bdc4e3;
+    font-family: 'roboto-medium', sans-serif;
 }
 .modal-campo input:focus {
-    outline: none; border-color: #1b2774;
+    outline: none; border-color: #2f3b8b;
 }
 .btn-salvar-modal {
-    background-color: #1b2774; color: #cccccc;
+    background-color: #6371c8; color: #cccccc;
     border: none; padding: 12px 20px; border-radius: 6px;
     font-family: 'roboto-medium', sans-serif; font-size: 11px;
     cursor: pointer; transition: background-color 0.2s;
     align-self: flex-end; margin-top: 42px;
 }
-.btn-salvar-modal:hover { background-color: #0e174f; }
+.btn-salvar-modal:hover { background-color: #2f3b8b; }
 
 @media (max-width: 600px) {
     .modal-conteudo { flex-direction: column; max-height: none; max-width: none; }
@@ -691,7 +690,7 @@ color: #e6e5e5;
     left: 0;
     width: 100%;
     height: 20px;
-    background-color: #1b2774;
+    background-color: #6371c8;
     display: flex;
     justify-content: space-around;
     align-items: center;
@@ -705,15 +704,15 @@ color: #e6e5e5;
     cursor: pointer;
     font-family: 'roboto-medium', sans-serif;
     font-size: 10px;
-    color: #606890;
+    color: #47559a;
     text-decoration: none;
 }
 .aba-item:hover{
-    color: #e6e5e5;
+    color: #273175;
     font-family: 'roboto-bold', sans-serif;
 }
 .aba-item.ativo {
-    color: #e6e5e5;
+    color: #273175;
     font-family: 'roboto-bold', sans-serif;
 }
 
@@ -726,7 +725,7 @@ color: #e6e5e5;
     right: 4px;
     background: none;
     border: none;
-    color: #1b2774;
+    color: #6371c8;
     cursor: pointer;
     display: flex;
     align-items: center;
@@ -748,143 +747,170 @@ color: #e6e5e5;
 
 /* Regras aplicadas quando o body tiver a classe .dark-mode */
 body.dark-mode {
-    background-color: #0d0e15; /* Fundo escuro profundo */
+    background-color: #0d0e19; /* Fundo escuro profundo */
     color: #bdc4e3;
 }
 
 body.dark-mode .logo .cls-1{
-fill: #8e9cd6;
+fill: #162a70;
 }
 body.dark-mode .IMAGINE {
-color:#8e9cd6
+color:#162a70
 }
 body.dark-mode .Biblioteca {
-    color: #39458f;
+    color: #545d85;
 }
 body.dark-mode .recentes{
-color: #8e9cd6;
+color: #545d85;
 }
+
 
 body.dark-mode .botaob,
 body.dark-mode .lupa,
 body.dark-mode .busca::placeholder {
-    color: #1c2351 !important;
-    background-color: #0d1127 !important;
+    color: #1a1c2c !important;
+    background-color: #02040d !important;
 }
 body.dark-mode .busca {
-    color: #bdc4e3 !important;
-    background-color: #0d1127 !important;
+    color: #545d85 !important;
+    background-color: #02040d !important;
 }
+
 
 body.dark-mode .mais {
-    background-color: #121839;
-    color: #39458f;
+    background-color: #02040d;
+    color: #162a70;
 }
 body.dark-mode .mais:hover {
-    background-color: #1c2351;
-    color: #bdc4e3;
+    background-color: #162a70;
+    color: #02040d;
 }
 body.dark-mode .opcoesmais {
-    background-color: #121839;
-    color: #39458f;
+    background-color: #02040d;
+    color: #1a1c2c;
 }
 body.dark-mode .opcoesmais:hover {
-    background-color: #1c2351;
-    color: #bdc4e3;
+    background-color: #02040d;
+    color: #162a70;
 }
 
 
+body.dark-mode .categoria-item {
+    background-color: #02040d;
+    color: #1a1c2c;
+}
+body.dark-mode .categoria-item:hover {
+    background-color: #162a70 ;
+    color: #090c1b ;
+}
+body.dark-mode .categoria-item.ativo {
+    background-color: #162a70 ;
+    color: #090c1b ;
+}
+
+
+body.dark-mode .card-recente-titulo,
+body.dark-mode .titulo{
+color: #545d85;
+}
+body.dark-mode .card-recente-autor,
+body.dark-mode .card-principal-autor{
+color: #242636 !important;
+}
 
 
 body.dark-mode .cardsR .card,
 body.dark-mode .cardsC .card,
-body.dark-mode .modal-conteudo,
-body.dark-mode .modal-esquerda,
 body.dark-mode .card,
 body.dark-mode .menu-categorias-capa {
-    background-color: #0d1127;
+    background-color: #02040d;
 }
-
 body.dark-mode .btn-cat {
-border-color: #1c2351;
-color: #1c2351
+border-color: #02040d;
+color: #1a1c2c;
+border-color: #1a1c2c;
 }
 
-body.dark-mode .card-recente-titulo,
-body.dark-mode .titulo{
-color: #bdc4e3;
+body.dark-mode .modal-conteudo,
+body.dark-mode .modal-esquerda{
+    background-color: #1a1c2c;
 }
-body.dark-mode .card-recente-autor,
-body.dark-mode .card-principal-autor{
-color: #39458f !important;
-}
-
-body.dark-mode .busca,
 body.dark-mode .modal-campo label,
 body.dark-mode .btn-fechar-modal,
 body.dark-mode .btn-acao-topo {
-color: #bdc4e3;
+color: #02040d;
 }
-
 body.dark-mode .modal-campo input {
-    background-color: #1c2351;
+    background-color: #02040d;
     border-color: transparent;
-    color: #39458f;
+    color: #424662;
 }
-
-
-
+body.dark-mode .btn-salvar-modal {
+    background-color: #02040d;
+    color: #424662;
+}
+body.dark-mode .btn-salvar-modal:hover {
+    background-color: #424662;
+    color: #02040d;
+}
 
 body.dark-mode .btn-acao-topo {
-    color: #1b2774;
+    color: #122051;
 }
 body.dark-mode .btn-acao-topo:hover {
-    color: #39458f;
+    color: #545d85;
 }
-body.dark-mode .btn-acao-topo.ativo{
-   color: #39458f;
+body.dark-mode .opcao-filtro {
+    color: #1a1c2c; 
 }
 body.dark-mode .opcao-filtro:hover {
-    background-color: #1c2351; 
-    color: #0d1127;
+    background-color: #545d85; 
+    color: #02040d;
 }
 body.dark-mode .opcao-filtro.ativa {
-    color: #0d1127; 
-    background-color: #1c2351;
+    color: #02040d; 
+    background-color: #545d85;
 }
 body.dark-mode .balao-filtro {
-background-color: #0d1127;
+background-color: #02040d;
 }
 
-body.dark-mode .categoria-item {
-    background-color: #0d1127;
-    color: #1c2351;
+
+body.dark-mode .btn-selecionar-tudo {
+    background-color: #02040d;
+    color: #162a70;
+}
+body.dark-mode .btn-selecionar-tudo:hover {
+    background-color: #162a70;
+    color: #02040d;
+}
+body.dark-mode .btn-deletar-secao { 
+    background-color: #02040d;
+    color: #c62222;
+}
+body.dark-mode .btn-deletar-secao:hover {
+background-color: #c62222;
+color: #02040d;
 }
 
-.categoria-item:hover {
-    background-color: #121839 !important;
-    color: #39458f !important;
-}
-.categoria-item.ativo {
-    background-color: #121839 !important;
-    color: #39458f !important;
-}
 
 body.dark-mode .aba-inferior {
-background-color: #121839 !important;
+background-color: #02040d !important;
 }
 body.dark-mode .aba-item {
-color: #39458f !important;
+color: #1a1c2c !important;
 }
 body.dark-mode .aba-item:hover{
-    color: #bdc4e3 !important;
+    color: #162a70 !important;
 }
 body.dark-mode .aba-item.ativo {
-    color: #bdc4e3 !important;
+    color: #162a70 !important;
 }
+
+
 body.dark-mode .btn-tema{
-    color: #8e9cd6;
+    color: #1e2e6a;
 }
 body.dark-mode .btn-tema:hover{
-    color: #bdc4e3;
+    color: #545d85;
 }

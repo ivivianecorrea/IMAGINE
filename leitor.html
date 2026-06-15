@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.1.5/jszip.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/epubjs/dist/epub.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.4.120/pdf.min.js"></script>
     <link rel="stylesheet" href="leitor.css">
     <title>Leitor</title>
 </head>
@@ -12,16 +13,134 @@
     <div class="barra-topo">
         <button class="btn-voltar" onclick="window.location.href='index.html'">←</button>
         <h2 id="leitor-titulo" class="titulo-livro">Carregando...</h2>
-        <div style="width: 80px;"></div>
+        <div class="botoes-topo">
+            <!-- Botão de personalização (T) -->
+            <button id="btn-personalizar" class="btn-personalizar" title="Personalizar visual">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <text x="4" y="20" font-family="Times New Roman, serif" font-size="18" font-weight="bold" fill="currentColor">T</text>
+                </svg>
+            </button>
+            <!-- Botão do sumário -->
+            <button id="btn-sumario" class="btn-sumario" title="Sumário">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"></path>
+                    <path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"></path>
+                </svg>
+            </button>
+        </div>
     </div>
+
+    <!-- Sidebar direita (sumário) -->
+    <div id="sidebar-sumario" class="sidebar-sumario">
+        <div class="sidebar-header">
+            <span class="sumario">Sumário</span>
+            <button id="fechar-sumario" class="fechar-sumario">✕</button>
+        </div>
+        <ul id="lista-sumario" class="lista-sumario">
+            <li>Carregando capítulos...</li>
+        </ul>
+    </div>
+
+    <!-- Sidebar direita (personalização) -->
+    <div id="sidebar-personalizacao" class="sidebar-personalizacao">
+        <div class="sidebar-header">
+            <span class="personalizar-titulo">Personalizar</span>
+            <button id="fechar-personalizacao" class="fechar-personalizacao">✕</button>
+        </div>
+        <div class="personalizacao-conteudo">
+            <div class="controles-grid">
+                <!-- Cor de fundo -->
+                <div class="controle-item">
+                    <label>Cor de fundo</label>
+                    <input type="color" id="bg-cor" value="#f2e9c8">
+                    <button id="reset-bg" class="btn-pequeno">Reset</button>
+                </div>
+                <!-- Cor da fonte -->
+                <div class="controle-item">
+                    <label>Cor da fonte</label>
+                    <input type="color" id="texto-cor" value="#1c2351">
+                    <button id="reset-texto-cor" class="btn-pequeno">Reset</button>
+                </div>
+                <!-- Fonte -->
+                <div class="controle-item" style="grid-column: span 2;">
+                    <label>Fonte</label>
+                    <div style="display: flex; gap: 8px;">
+                        <select id="fonte-select" style="flex:1">
+                            <option value="'roboto-medium', sans-serif">Padrão (Roboto)</option>
+                            <option value="'Times New Roman', serif">Times New Roman</option>
+                            <option value="'Arial', sans-serif">Arial</option>
+                            <option value="'Georgia', serif">Georgia</option>
+                            <option value="'Courier New', monospace">Courier New</option>
+                        </select>
+                        <button id="upload-fonte-btn" class="btn-pequeno">+ Fonte</button>
+                        <input type="file" id="upload-fonte-input" accept=".ttf,.otf,.woff,.woff2" style="display:none">
+                    </div>
+                </div>
+                <!-- Grossura -->
+                <div class="controle-item">
+                    <label>Grossura</label>
+                    <select id="peso-select">
+                        <option value="normal">Normal</option>
+                        <option value="light">Light</option>
+                        <option value="bold">Bold</option>
+                        <option value="black">Black</option>
+                    </select>
+                </div>
+                <!-- Tamanho da fonte -->
+                <div class="controle-item">
+                    <label>Tamanho (px)</label>
+                    <input type="range" id="tamanho-range" min="12" max="28" step="1" value="16">
+                    <span id="tamanho-valor">16px</span>
+                </div>
+                <!-- Espaçamento entre parágrafos -->
+                <div class="controle-item">
+                    <label>Espaç. parágrafos (px)</label>
+                    <input type="range" id="paragrafo-range" min="0" max="40" step="2" value="16">
+                    <span id="paragrafo-valor">16px</span>
+                </div>
+                <!-- Altura da linha -->
+                <div class="controle-item">
+                    <label>Altura da linha</label>
+                    <input type="range" id="lineheight-range" min="1" max="2.5" step="0.1" value="1.5">
+                    <span id="lineheight-valor">1.5</span>
+                </div>
+                <!-- Espaçamento entre letras -->
+                <div class="controle-item">
+                    <label>Espaç. letras (px)</label>
+                    <input type="range" id="letterspacing-range" min="0" max="5" step="0.5" value="0">
+                    <span id="letterspacing-valor">0px</span>
+                </div>
+                <!-- Predefinições de fundo (modos de leitura) -->
+                <div class="predefinicoes">
+                    <label>Modos de leitura</label>
+                    <div class="botoes-predef">
+                        <button class="btn-predef" data-bg="#f2e9c8" data-texto="#1c2351" style="background:#f2e9c8; color:#1c2351;">Claro</button>
+                        <button class="btn-predef" data-bg="#2b2b2b" data-texto="#e0e0e0" style="background:#2b2b2b; color:#e0e0e0;">Escuro</button>
+                        <button class="btn-predef" data-bg="#f5e6d3" data-texto="#5a3e2b" style="background:#f5e6d3; color:#5a3e2b;">Sépia</button>
+                        <button class="btn-predef" data-bg="#d6e6f0" data-texto="#1c3f5c" style="background:#d6e6f0; color:#1c3f5c;">Azul suave</button>
+                        <button class="btn-predef" data-bg="#e0f0e0" data-texto="#2c4c2c" style="background:#e0f0e0; color:#2c4c2c;">Verde suave</button>
+                    </div>
+                </div>
+            </div>
+            <button id="reset-todas-pers" class="btn-reset-todas">Resetar todas personalizações</button>
+        </div>
+    </div>
+    
+<!-- Menu inferior com barra de progresso -->
+<div class="footer-leitor">
+    <div class="progresso-container">
+        <div class="info-paginas">
+            <span id="pagina-atual">0</span> - <span id="pagina-total">0</span>
+        </div>
+        <input type="range" id="progresso-slider" min="0" max="100" value="0" step="0.1">
+        <div class="tooltip-porcentagem" id="tooltip-porcentagem">0%</div>
+    </div>
+</div>
 
     <div id="conteudo-livro" class="area-texto">
         A processar o arquivo, favor aguarde...
     </div>
 
-    <!-- Dependências do EPUB -->
-<script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.1.5/jszip.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/epubjs/dist/epub.min.js"></script>
     <script src="leitor.js"></script>
 </body>
 </html>
