@@ -1,21 +1,18 @@
 let currentRendition = null;
 let isPDF = false;
 let pdfDoc = null;
-let pdfPagesData = [];     // para rolagem entre páginas do PDF
+let pdfPagesData = [];
 let totalPages = 0;
 
 let preferencias = {
     bgCor: "#f2e9c8",
     textoCor: "#1c2351",
     fonte: "'roboto-medium', sans-serif",
-    peso: "normal",
     tamanho: 16,
     paragrafo: 16,
-    lineHeight: 1.5,
     letterSpacing: 0
 };
 
-// ================== PREFERÊNCIAS ==================
 function carregarPreferencias() {
     const salvas = localStorage.getItem("leitor_personalizacao");
     if (salvas) {
@@ -31,16 +28,13 @@ function salvarPreferencias() {
     localStorage.setItem("leitor_personalizacao", JSON.stringify(preferencias));
 }
 
-// Gera CSS para EPUB (será injetado no iframe)
 function gerarCSSepub() {
     return `
         body {
             background-color: ${preferencias.bgCor} !important;
             color: ${preferencias.textoCor} !important;
             font-family: ${preferencias.fonte} !important;
-            font-weight: ${preferencias.peso} !important;
             font-size: ${preferencias.tamanho}px !important;
-            line-height: ${preferencias.lineHeight} !important;
             letter-spacing: ${preferencias.letterSpacing}px !important;
             margin: 0 auto !important;
             max-width: 100% !important;
@@ -56,7 +50,6 @@ function gerarCSSepub() {
     `;
 }
 
-// Aplica CSS no iframe do EPUB
 function aplicarCSSnoIframe() {
     if (!currentRendition) return;
     const iframes = document.querySelectorAll("#conteudo-livro iframe");
@@ -77,20 +70,16 @@ function aplicarCSSnoIframe() {
 }
 
 function aplicarPreferencias() {
-    // Container principal (fundo geral)
     const container = document.getElementById("conteudo-livro");
     if (container) {
         container.style.backgroundColor = preferencias.bgCor;
         container.style.color = preferencias.textoCor;
-        // as demais propriedades não afetam o conteúdo do iframe, apenas o container
     }
-    // Aplica no iframe do EPUB
     if (!isPDF) {
         aplicarCSSnoIframe();
     }
 }
 
-// ================== PDF ==================
 async function renderPDFAllPages() {
     const container = document.getElementById("conteudo-livro");
     if (!pdfDoc) return;
@@ -152,7 +141,6 @@ function atualizarProgressoPorScroll() {
     tooltip.innerText = Math.round(progresso * 100) + "%";
 
     if (isPDF && pdfPagesData.length) {
-        // Atualiza número da página no PDF
         let pagina = 1;
         for (let i = 0; i < pdfPagesData.length; i++) {
             if (scrollTop >= pdfPagesData[i].top - 50) {
@@ -162,13 +150,11 @@ function atualizarProgressoPorScroll() {
         spanAtual.innerText = pagina;
         spanTotal.innerText = totalPages;
     } else {
-        // Para EPUB, mostra apenas porcentagem
         spanAtual.innerText = Math.round(progresso * 100);
         spanTotal.innerText = "100";
     }
 }
 
-// ================== EPUB ==================
 function iniciarEPUB(blob) {
     const reader = new FileReader();
     reader.onload = function(e) {
@@ -177,25 +163,21 @@ function iniciarEPUB(blob) {
         const rendition = book.renderTo("conteudo-livro", {
             width: "100%",
             height: "100%",
-            flow: "scrolled",        // rolagem contínua
+            flow: "scrolled",
             manager: "continuous",
             spread: "none"
         });
         currentRendition = rendition;
         rendition.display().then(() => {
-            // Aguarda o iframe carregar e injeta CSS
             const checkInterval = setInterval(() => {
                 const iframe = document.querySelector("#conteudo-livro iframe");
                 if (iframe && iframe.contentDocument) {
                     clearInterval(checkInterval);
-                    // Aplica CSS personalizado
                     aplicarCSSnoIframe();
-                    // Configura barra de progresso baseada na rolagem do container
                     const container = document.getElementById("conteudo-livro");
                     container.addEventListener("scroll", atualizarProgressoPorScroll);
                     configurarBarraProgresso();
                     atualizarProgressoPorScroll();
-                    // Reaplica CSS quando o conteúdo do iframe mudar (navegação)
                     rendition.on("relocated", () => aplicarCSSnoIframe());
                 }
             }, 500);
@@ -205,7 +187,6 @@ function iniciarEPUB(blob) {
     reader.readAsArrayBuffer(blob);
 }
 
-// ================== SUMÁRIO ==================
 function carregarSumarioEpub(book) {
     book.loaded.navigation.then((nav) => {
         const lista = document.getElementById("lista-sumario");
@@ -281,7 +262,6 @@ async function extrairSumarioPDF(blob) {
     }
 }
 
-// ================== PERSONALIZAÇÃO ==================
 function inicializarPersonalizacao() {
     const sidebar = document.getElementById("sidebar-personalizacao");
     const btnPersonalizar = document.getElementById("btn-personalizar");
@@ -303,13 +283,10 @@ function inicializarPersonalizacao() {
     const bgCorInput = document.getElementById("bg-cor");
     const textoCorInput = document.getElementById("texto-cor");
     const fonteSelect = document.getElementById("fonte-select");
-    const pesoSelect = document.getElementById("peso-select");
     const tamanhoRange = document.getElementById("tamanho-range");
     const tamanhoValor = document.getElementById("tamanho-valor");
     const paragrafoRange = document.getElementById("paragrafo-range");
     const paragrafoValor = document.getElementById("paragrafo-valor");
-    const lineheightRange = document.getElementById("lineheight-range");
-    const lineheightValor = document.getElementById("lineheight-valor");
     const letterspacingRange = document.getElementById("letterspacing-range");
     const letterspacingValor = document.getElementById("letterspacing-valor");
     const resetBg = document.getElementById("reset-bg");
@@ -321,13 +298,10 @@ function inicializarPersonalizacao() {
     bgCorInput.value = preferencias.bgCor;
     textoCorInput.value = preferencias.textoCor;
     fonteSelect.value = preferencias.fonte;
-    pesoSelect.value = preferencias.peso;
     tamanhoRange.value = preferencias.tamanho;
     tamanhoValor.innerText = preferencias.tamanho + "px";
     paragrafoRange.value = preferencias.paragrafo;
     paragrafoValor.innerText = preferencias.paragrafo + "px";
-    lineheightRange.value = preferencias.lineHeight;
-    lineheightValor.innerText = preferencias.lineHeight;
     letterspacingRange.value = preferencias.letterSpacing;
     letterspacingValor.innerText = preferencias.letterSpacing + "px";
 
@@ -340,7 +314,6 @@ function inicializarPersonalizacao() {
     bgCorInput.addEventListener("input", e => atualizarPreferencia("bgCor", e.target.value));
     textoCorInput.addEventListener("input", e => atualizarPreferencia("textoCor", e.target.value));
     fonteSelect.addEventListener("change", e => atualizarPreferencia("fonte", e.target.value));
-    pesoSelect.addEventListener("change", e => atualizarPreferencia("peso", e.target.value));
     tamanhoRange.addEventListener("input", e => {
         tamanhoValor.innerText = e.target.value + "px";
         atualizarPreferencia("tamanho", parseInt(e.target.value));
@@ -348,10 +321,6 @@ function inicializarPersonalizacao() {
     paragrafoRange.addEventListener("input", e => {
         paragrafoValor.innerText = e.target.value + "px";
         atualizarPreferencia("paragrafo", parseInt(e.target.value));
-    });
-    lineheightRange.addEventListener("input", e => {
-        lineheightValor.innerText = e.target.value;
-        atualizarPreferencia("lineHeight", parseFloat(e.target.value));
     });
     letterspacingRange.addEventListener("input", e => {
         letterspacingValor.innerText = e.target.value + "px";
@@ -364,10 +333,8 @@ function inicializarPersonalizacao() {
             bgCor: "#f2e9c8",
             textoCor: "#1c2351",
             fonte: "'roboto-medium', sans-serif",
-            peso: "normal",
             tamanho: 16,
             paragrafo: 16,
-            lineHeight: 1.5,
             letterSpacing: 0
         };
         salvarPreferencias();
@@ -375,13 +342,10 @@ function inicializarPersonalizacao() {
         bgCorInput.value = preferencias.bgCor;
         textoCorInput.value = preferencias.textoCor;
         fonteSelect.value = preferencias.fonte;
-        pesoSelect.value = preferencias.peso;
         tamanhoRange.value = preferencias.tamanho;
         tamanhoValor.innerText = preferencias.tamanho + "px";
         paragrafoRange.value = preferencias.paragrafo;
         paragrafoValor.innerText = preferencias.paragrafo + "px";
-        lineheightRange.value = preferencias.lineHeight;
-        lineheightValor.innerText = preferencias.lineHeight;
         letterspacingRange.value = preferencias.letterSpacing;
         letterspacingValor.innerText = preferencias.letterSpacing + "px";
     });
@@ -415,7 +379,6 @@ function inicializarPersonalizacao() {
     });
 }
 
-// ================== LEITOR PRINCIPAL ==================
 function executarLeitor() {
     carregarPreferencias();
 

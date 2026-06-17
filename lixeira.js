@@ -1,7 +1,6 @@
 
 // 1. Pega a lista de excluídos do navegador
-let lixeiraLivros = JSON.parse(localStorage.getItem('minhaLixeira')) || [];
-
+let minhaLixeira = JSON.parse(localStorage.getItem('minhaLixeira')) || [];
 const containerLixeira = document.getElementById('cards-lixeira');
 const mensagemVazia = document.getElementById('mensagem-vazia');
 // 2. Função para desenhar os livros excluídos na tela

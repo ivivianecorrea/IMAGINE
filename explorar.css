@@ -90,7 +90,6 @@
 
 
 
-
 /* ==========================================================================
    BARRA DE NAVEGAÇÃO INFERIOR COLETIVA
    ========================================================================== */
@@ -100,27 +99,29 @@
     left: 0;
     width: 100%;
     height: 20px;
-    background-color: #09092d;
+    background-color: #6371c8;
     display: flex;
     justify-content: space-around;
     align-items: center;
     z-index: 2000;
     padding: 5px 0;
-    box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.15);
-    font-family: 'roboto-black', sans-serif;
-    color: #cccccc;
 }
 .aba-item {
     display: flex;
     flex-direction: column;
     align-items: center;
     cursor: pointer;
-    font-family: 'roboto-black', sans-serif;
+    font-family: 'roboto-medium', sans-serif;
     font-size: 10px;
-    color: #5d5d6e;
+    color: #47559a;
     text-decoration: none;
 }
-.aba-item.ativo {
-    color: #cccccc;
-    font-weight: bold;
+.aba-item:hover{
+    color: #273175;
+    font-family: 'roboto-bold', sans-serif;
 }
+.aba-item.ativo {
+    color: #273175;
+    font-family: 'roboto-bold', sans-serif;
+}
+

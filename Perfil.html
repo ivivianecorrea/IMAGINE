@@ -4,9 +4,19 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Perfil</title>
-    <link rel="stylesheet" href="perfil.css"> </head>
+    <link rel="stylesheet" href="perfil.css">
+    <link rel="stylesheet" href="style.css">    
+</head>
 
 <body>
+<script>
+    // Aplica o tema salvo assim que a página carregar
+    const temaSalvo = localStorage.getItem('tema') || 'claro';
+    if (temaSalvo === 'escuro') {
+        document.body.classList.add('dark-mode');
+    }
+</script>
+
 <!--PERFIL-->
     <section id="perfil" class="secao-perfil">
         <div class="cabecalho-perfil">

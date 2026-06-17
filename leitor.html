@@ -7,9 +7,18 @@
     <script src="https://cdn.jsdelivr.net/npm/epubjs/dist/epub.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.4.120/pdf.min.js"></script>
     <link rel="stylesheet" href="leitor.css">
+    <link rel="stylesheet" href="style.css">
     <title>Leitor</title>
 </head>
 <body>
+    <script>
+    // Aplica o tema salvo assim que a página carregar
+    const temaSalvo = localStorage.getItem('tema') || 'claro';
+    if (temaSalvo === 'escuro') {
+        document.body.classList.add('dark-mode');
+    }
+</script>
+    
     <div class="barra-topo">
         <button class="btn-voltar" onclick="window.location.href='index.html'">←</button>
         <h2 id="leitor-titulo" class="titulo-livro">Carregando...</h2>
@@ -76,16 +85,6 @@
                         <input type="file" id="upload-fonte-input" accept=".ttf,.otf,.woff,.woff2" style="display:none">
                     </div>
                 </div>
-                <!-- Grossura -->
-                <div class="controle-item">
-                    <label>Grossura</label>
-                    <select id="peso-select">
-                        <option value="normal">Normal</option>
-                        <option value="light">Light</option>
-                        <option value="bold">Bold</option>
-                        <option value="black">Black</option>
-                    </select>
-                </div>
                 <!-- Tamanho da fonte -->
                 <div class="controle-item">
                     <label>Tamanho (px)</label>
@@ -97,12 +96,6 @@
                     <label>Espaç. parágrafos (px)</label>
                     <input type="range" id="paragrafo-range" min="0" max="40" step="2" value="16">
                     <span id="paragrafo-valor">16px</span>
-                </div>
-                <!-- Altura da linha -->
-                <div class="controle-item">
-                    <label>Altura da linha</label>
-                    <input type="range" id="lineheight-range" min="1" max="2.5" step="0.1" value="1.5">
-                    <span id="lineheight-valor">1.5</span>
                 </div>
                 <!-- Espaçamento entre letras -->
                 <div class="controle-item">

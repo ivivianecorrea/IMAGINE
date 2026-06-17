@@ -5,9 +5,18 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Lixeira</title>
     <link rel="stylesheet" href="lixeira.css">
+    <link rel="stylesheet" href="style.css">
 </head>
 
 <body>
+    <script>
+    // Aplica o tema salvo assim que a página carregar
+    const temaSalvo = localStorage.getItem('tema') || 'claro';
+    if (temaSalvo === 'escuro') {
+        document.body.classList.add('dark-mode');
+    }
+</script>
+
 <!--lixeira-->
     <section id="lixeira" class="secao-lixeira">
         <div class="topo-lixeira">

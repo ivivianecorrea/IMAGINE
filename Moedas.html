@@ -5,9 +5,18 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Moedas</title>
     <link rel="stylesheet" href="moedas.css"> </head>
+    <link rel="stylesheet" href="style.css">
 </head>
 
 <body>
+    <script>
+    // Aplica o tema salvo assim que a página carregar
+    const temaSalvo = localStorage.getItem('tema') || 'claro';
+    if (temaSalvo === 'escuro') {
+        document.body.classList.add('dark-mode');
+    }
+</script>
+
 <header class="cabecalho-moedas">
         <p class="titulo-saldo">Seu Saldo Total</p>
         <h1 class="valor-saldo"><svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" viewBox="0 0 80 80">
@@ -83,4 +92,4 @@
 </nav>
 <script src="moedas.js"></script>
 </body>
-</html>>
+</html>
