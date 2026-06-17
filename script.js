@@ -297,7 +297,22 @@ document.addEventListener('DOMContentLoaded', () => {
             
             if (livrosSelecionados.includes(livro.id)) {
                 card.classList.add('card-selecionado-exclusao');
+                
             }
+            // ========== ADICIONA ETIQUETA DE FORMATO ==========
+    const etiqueta = card.querySelector('.etiqueta-formato');
+    if (etiqueta) {
+        const formato = livro.formato;
+        if (formato === 'pdf') {
+            etiqueta.textContent = 'PDF';
+            etiqueta.classList.add('pdf');
+        } else if (formato === 'epub') {
+            etiqueta.textContent = 'EPUB';
+            etiqueta.classList.add('epub');
+        } else {
+            etiqueta.style.display = 'none';
+        }
+    }
 
             card.querySelector('.capa-livro').src = livro.capa || 'img/capapadrao.jpg';
             card.querySelector('.titulo').textContent = livro.titulo;
@@ -637,31 +652,35 @@ if (inputArquivo) {
             }
         };
 
-        if (!livro.lidoRecentemente) {
-            livro.lidoRecentemente = true;
-            salvarDados();
-            const catAtiva = document.querySelector('.categoria-item.ativo')?.dataset.categoria || 'todos';
-            renderizarBiblioteca(catAtiva, buscaInput ? buscaInput.value : '');
-        }
-
         modalEdicao.style.display = 'flex';
     }
 
     if (modalCapaImg) {
-        modalCapaImg.style.cursor = 'pointer';
-        modalCapaImg.title = 'Clique na capa para abrir o leitor';
-        modalCapaImg.onclick = () => {
-            if (livroSendoEditadoId) {
-                let listaRecentes = JSON.parse(localStorage.getItem('cardsR')) || [];
-                if (!listaRecentes.includes(livroSendoEditadoId)) {
-                    listaRecentes.unshift(livroSendoEditadoId); 
-                    if (listaRecentes.length > 5) listaRecentes.pop();
-                    localStorage.setItem('cardsR', JSON.stringify(listaRecentes));
-                }
-                window.open(`leitor.html?id=${livroSendoEditadoId}`, '_blank');
+    modalCapaImg.style.cursor = 'pointer';
+    modalCapaImg.title = 'Clique na capa para abrir o leitor';
+    
+    modalCapaImg.onclick = () => {
+        if (livroSendoEditadoId) {
+            // Marca o livro como lido recentemente, se ainda não estiver
+            const livro = meusLivros.find(l => l.id === livroSendoEditadoId);
+            if (livro && !livro.lidoRecentemente) {
+                livro.lidoRecentemente = true;
+                salvarDados();
+                const catAtiva = document.querySelector('.categoria-item.ativo')?.dataset.categoria || 'todos';
+                renderizarBiblioteca(catAtiva, buscaInput ? buscaInput.value : '');
             }
-        };
-    }
+            
+            // Código original para abrir o leitor e gerenciar a lista de recentes (se quiser manter)
+            let listaRecentes = JSON.parse(localStorage.getItem('cardsR')) || [];
+            if (!listaRecentes.includes(livroSendoEditadoId)) {
+                listaRecentes.unshift(livroSendoEditadoId);
+                if (listaRecentes.length > 5) listaRecentes.pop();
+                localStorage.setItem('cardsR', JSON.stringify(listaRecentes));
+            }
+            window.open(`leitor.html?id=${livroSendoEditadoId}`, '_blank');
+        }
+    };
+}
 
     // Verificar se a biblioteca ePub.js foi carregada, se não tentar carregar dinamicamente
     if (typeof ePub === 'undefined') {

@@ -3,88 +3,97 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Explorar</title>
-    <link rel="stylesheet" href="explorar.css"> </head>
+    <title>Desafios</title>
     <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="explorar.css">
 </head>
 <body>
-    <script>
-    // Aplica o tema salvo assim que a página carregar
+<script>
     const temaSalvo = localStorage.getItem('tema') || 'claro';
-    if (temaSalvo === 'escuro') {
-        document.body.classList.add('dark-mode');
-    }
+    if (temaSalvo === 'escuro') document.body.classList.add('dark-mode');
 </script>
 
-    <!--Painel de Desafios de Leitura-->
-    <div class="painel-desafio">
-        <h3 class="titulo-desafio">🏆 Desafio de Leitura 2026</h3>
-        <p class="descricao-desafio">Você leu <strong>4 de 12 livros</strong> da sua meta anual!</p>
-        <div class="progresso-desafio-fundo">
-            <div class="progresso-desafio-barra" style="width: 33.3%;"></div>
-        </div>
-        <span class="porcentagem-desafio">33% concluído</span>
+<div class="container-desafios">
+    <div class="cabecalho-desafios">
+        <h1 class="titulo-principal">Meus Desafios</h1>
+        <button id="btn-adicionar-desafio" class="btn-adicionar">+ Adicionar Desafio</button>
     </div>
-</section>
-<header class="topo-explorar">
-        <div class="caixa-busca-explorar">
-            <span>🔍</span>
-            <input type="text" placeholder="Buscar autores, livros ou gêneros...">
+
+    <!-- Desafio atual -->
+    <div class="secao-desafio">
+        <h2>Em Progresso</h2>
+        <div id="desafio-atual" class="card-desafio card-desafio-destaque">
+            <p class="sem-desafio">Nenhum desafio em progresso. Clique em "Adicionar Desafio" para começar!</p>
         </div>
-    </header>
+    </div>
 
-    <main class="conteudo-explorar">
-        <section class="banner-destaque">
-            <div class="info-banner">
-                <span class="badge-banner">RECOMENDADO</span>
-                <h2>O Guia do Mochileiro das Galáxias</h2>
-                <p>Descubra o clássico da ficção científica que mudou gerações.</p>
-                <button class="btn-banner">Ver Detalhes</button>
-            </div>
-        </section>
+    <!-- Histórico (concluídos e falhos) -->
+    <div class="secao-desafio">
+        <h2>Histórico</h2>
+        <div id="lista-historico" class="lista-historico">
+            <p class="sem-historico">Nenhum desafio concluído ou falho ainda.</p>
+        </div>
+    </div>
 
-        <section class="secao-explorar">
-            <div class="titulo-linha">
-                <h2>🔥 Bombando na Comunidade</h2>
-                <a href="#" class="ver-mais">Ver tudo</a>
-            </div>
-            
-            <div class="rolagem-horizontal">
-                <div class="card-explorar">
-                    <img src="https://placehold.co/150x220?text=Livro+1" alt="Livro 1">
-                    <h4>Corte de Espinhos e Rosas</h4>
-                    <p>Fantasia • 4.8★</p>
-                </div>
-                <div class="card-explorar">
-                    <img src="https://placehold.co/150x220?text=Livro+2" alt="Livro 2">
-                    <h4>É Assim Que Acaba</h4>
-                    <p>Romance • 4.6★</p>
-                </div>
-                <div class="card-explorar">
-                    <img src="https://placehold.co/150x220?text=Livro+3" alt="Livro 3">
-                    <h4>Duna</h4>
-                    <p>Ficção • 4.9★</p>
-                </div>
-            </div>
-        </section>
-    </main>
-
-
-
-
-
-
-
-
-
-
+<!-- Modal para adicionar desafio -->
+<div id="modal-desafio" class="modal-overlay" style="display: flex;">
+    <div class="modal-conteudo">
+        <button class="btn-fechar-modal" id="fechar-modal-desafio">✕</button>
+        <h3 id="Novo-Desafio">Novo Desafio</h3>
+        
+        <div class="modal-campo">
+            <label>Nome do Desafio</label>
+            <input type="text" id="nome-desafio" placeholder="Ex: Ler 10 livros em 2026">
+        </div>
+        
+        <div class="modal-campo">
+            <label>Tipo</label>
+            <select id="tipo-desafio">
+                <option value="livros">Livros (quantidade finalizados)</option>
+                <option value="tempo">Tempo (horas de leitura)</option>
+            </select>
+        </div>
+        
+        <div class="modal-campo">
+            <label>Meta (quantidade)</label>
+            <input type="number" id="meta-desafio" value="1" min="1" step="1">
+        </div>
+        
+        <div class="modal-campo">
+            <label>Período</label>
+            <select id="periodo-desafio">
+                <option value="diario">Diário</option>
+                <option value="semanal">Semanal</option>
+                <option value="mensal">Mensal</option>
+                <option value="anual">Anual</option>
+                <option value="personalizado">Personalizado (data específica)</option>
+            </select>
+        </div>
+        
+        <div class="modal-campo" id="campo-data-inicio" style="display: none;">
+            <label>Data de Início</label>
+            <input type="date" id="data-inicio-desafio">
+        </div>
+        
+        <div class="modal-campo">
+            <label>Recorrência</label>
+            <select id="recorrencia-desafio">
+                <option value="sim">Sim, criar novo desafio igual ao finalizar</option>
+                <option value="nao">Não, apenas finalizar o desafio</option>
+            </select>
+        </div>
+        
+        <button id="salvar-desafio" class="btn-salvar-modal">Salvar Desafio</button>
+    </div>
+</div>
 
 <nav class="aba-inferior">
     <a href="index.html" class="aba-item"><span>Início</span></a>
-    <a href="Explorar.html" class="aba-item ativo"><span>Explorar</span></a>
+    <a href="Explorar.html" class="aba-item ativo"><span>Desafios</span></a>
     <a href="Moedas.html" class="aba-item"><span>Moedas</span></a>
     <a href="Perfil.html" class="aba-item"><span>Perfil</span></a>
 </nav>
+
 <script src="explorar.js"></script>
 </body>
 </html>

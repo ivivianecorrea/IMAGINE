@@ -1,32 +1,41 @@
-@font-face {
-    font-family: 'roboto-thin';
-    src: url('font/Roboto-thin.ttf') format('truetype');
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
 }
+
 html, body {
     height: 100%;
     width: 100%;
-    overflow: hidden !important;
-    background-color: #cccccc;
+    overflow: hidden;
+}
+sidebar-sumario, .sidebar-personalizacao {
+    background-color: #cccccc; /* mesma cor do fundo padrão */
 }
 
 #conteudo-livro {
     width: 100%;
     height: calc(100vh - 36px - 48px);
-    margin-top: 36px;
+    margin: 36px 11px 11px 11px;
     overflow-y: auto;
     scrollbar-width: none;
     -ms-overflow-style: none;
+    background-color: inherit; 
+    align-items: center;
+    justify-content: center;
 }
 #conteudo-livro::-webkit-scrollbar {
     display: none;
 }
 
 iframe {
-    width: 100%;
     height: 100%;
     border: none;
     overflow: hidden !important;
     scrollbar-width: none !important;
+    width: 100% !important;
+    margin: 0 !important;
+    padding: 0 !important;
 }
 iframe::-webkit-scrollbar {
     display: none !important;
@@ -38,7 +47,7 @@ iframe::-webkit-scrollbar {
     left: 0;
     right: 0;
     height: 48px;
-    background: rgba(204,204,204,0.9);
+    background: #cccccce6;
     backdrop-filter: blur(10px);
     display: flex;
     align-items: center;
@@ -48,7 +57,6 @@ iframe::-webkit-scrollbar {
 #status {
     padding: 20px;
     color: #cccccc;
-    font-family: sans-serif;
 }
 .barra-topo {
     width: 100%;
@@ -71,6 +79,7 @@ iframe::-webkit-scrollbar {
     cursor: pointer;
     color: #1c2351;
     align-items: center;
+    margin-top: 7px;
 }
 .titulo-livro {
     font-family:'roboto-thin', sans-serif;
@@ -81,6 +90,7 @@ iframe::-webkit-scrollbar {
     text-overflow: ellipsis;
     max-width: 60%;
     align-items: center;
+    margin-top: 20px;
 }
 
 /* ========== BOTÃO SUMÁRIO ========== */
@@ -92,16 +102,16 @@ iframe::-webkit-scrollbar {
     display: flex;
     align-items: center;
     justify-content: center;
-    padding: 1px;
+    padding: -2px;
     border-radius: 50%;
     transition: background-color 0.2s, transform 0.2s;
+    margin-top: 10px;
+    margin-right: 11px;
 }
 .btn-sumario:hover {
     color:#404a8a;
     transform: scale(1.05);
 }
-
-/* ========== SIDEBAR DIREITA ========== */
 .sidebar-sumario {
     position: fixed;
     top: 36px;
@@ -131,7 +141,6 @@ iframe::-webkit-scrollbar {
     color: #cccccc;
 }
 .sumario {
-    margin-left: 11px;
     font-size: 15px;
 }
 .fechar-sumario {
@@ -173,6 +182,7 @@ iframe::-webkit-scrollbar {
     align-items: center;
 }
 .btn-personalizar {
+    margin-top: 5px;
     background: none;
     border: none;
     color: #293165;
@@ -180,7 +190,7 @@ iframe::-webkit-scrollbar {
     display: flex;
     align-items: center;
     justify-content: center;
-    padding: 4px;
+    padding: 1px;
     border-radius: 50%;
     transition: background-color 0.2s, transform 0.2s;
 }
@@ -200,9 +210,16 @@ iframe::-webkit-scrollbar {
     display: flex;
     flex-direction: column;
     font-family: 'roboto-medium', sans-serif;
+    font-size: 13px;
     color: #293165;
     overflow-y: auto;
 }
+
+.fechar-personalizacao{
+color: #cccccc;
+background-color: none;
+}
+
 .sidebar-personalizacao.aberta {
     right: 0;
 }
@@ -215,11 +232,13 @@ iframe::-webkit-scrollbar {
     grid-template-columns: 1fr 1fr;
     gap: 16px;
     margin-bottom: 20px;
+        font-size: 8px;
 }
 .controle-item {
     display: flex;
     flex-direction: column;
     gap: 6px;
+        font-size: 9px;
 }
 .controle-item label {
     font-size: 12px;
@@ -378,4 +397,177 @@ iframe::-webkit-scrollbar {
     height: 100% !important;
     transform: scale(1) !important;
     zoom: 1 !important;
+}
+
+
+/* Dica de clique central */
+.dica-clique {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0,0,0,0.7);
+    z-index: 1000;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    animation: fadeIn 0.3s ease;
+}
+
+.dica-conteudo {
+    text-align: center;
+    color: white;
+    background: rgba(0,0,0,0.8);
+    padding: 20px 40px;
+    border-radius: 30px;
+    font-family: 'roboto-medium', sans-serif;
+    backdrop-filter: blur(8px);
+}
+
+.icone-clique {
+    font-size: 48px;
+    display: block;
+    margin-bottom: 10px;
+    animation: pulse 1.5s infinite;
+}
+
+.dica-conteudo p {
+    font-size: 16px;
+    margin: 0;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+@keyframes pulse {
+    0% { transform: scale(1); opacity: 0.7; }
+    50% { transform: scale(1.2); opacity: 1; }
+    100% { transform: scale(1); opacity: 0.7; }
+}
+
+/* Classes para ocultar menus */
+.menu-oculto .barra-topo {
+    top: -36px !important;
+    transition: top 0.3s ease;
+}
+.menu-oculto .footer-leitor {
+    bottom: -48px !important;
+    transition: bottom 0.3s ease;
+}
+
+.menu-oculto .sidebar-sumario,
+.menu-oculto .sidebar-personalizacao {
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 0.2s ease, visibility 0.2s ease;
+}
+
+/* Quando menus ocultos, o conteúdo ocupa a tela toda */
+.menu-oculto #conteudo-livro {
+    margin-top: 0 !important;
+    height: 100vh !important;
+    transition: margin-top 0.3s ease, height 0.3s ease;
+}
+
+/* Transições suaves para mostrar/ocultar */
+.barra-topo, .footer-leitor, .sidebar-sumario, .sidebar-personalizacao {
+    transition: transform 0.3s ease, opacity 0.2s ease, visibility 0.2s ease;
+}
+
+/* Quando menus ocultos, o iframe também deve expandir (para EPUB) */
+.menu-oculto #conteudo-livro iframe {
+    height: 100vh !important;
+}
+
+body.dark-mode .html,
+body.dark-mode .body {
+    background-color: #0d0e19;
+}
+
+body.dark-mode sidebar-sumario, .sidebar-personalizacao {
+    background-color: #0d0e19; /* mesma cor do fundo padrão */
+}
+
+body.dark-mode .barra-topo {
+    background-color: #0d0e19;
+}
+body.dark-mode .btn-voltar,
+body.dark-mode .titulo-livro,
+body.dark-mode .btn-personalizar,
+body.dark-mode .btn-sumario {
+    color: #737bd0;
+}
+
+body.dark-mode .sidebar-header {
+    background-color: #545d85;
+    color: #0d0e19;
+}
+
+body.dark-mode .sidebar-sumario {
+    background-color: #0d0e19;
+    color: #545d85;
+}
+
+
+body.dark-mode .fechar-sumario,
+body.dark-mode .fechar-personalizacao {
+    color: #0d0e19;
+}
+
+body.dark-mode .lista-sumario li:hover {
+    background-color: #162a70;
+    color:#0d0e19
+}
+
+body.dark-mode .btn-personalizar:hover {
+    color: #404a8a;
+}
+
+body.dark-mode .sidebar-personalizacao {
+    background-color: #0d0e19;
+    color: #545d85;
+}
+
+body.dark-mode .btn-pequeno {
+    background-color: #162a70;
+    color: #0d0e19;
+}
+
+body.dark-mode .btn-pequeno:hover {
+    background-color: #545d85;
+}
+
+body.dark-mode .controle-item input{
+background-color: #0d0e19;
+}
+
+body.dark-mode #fonte-select input{
+background-color: #0d0e19;
+}
+
+body.dark-mode #progresso-slider {
+    background: #545d85;
+}
+
+body.dark-mode #progresso-slider::-webkit-slider-thumb {
+    background: #545d85;
+}
+
+body.dark-mode .tooltip-porcentagem {
+    background-color: #162a70;
+    color: #545d85;
+}
+
+
+body.dark-mode .info-paginas {
+    color: #0d0e19;
+    background: #545d85;
+}
+
+body.dark-mode .footer-leitor {
+    background-color: #0d0e19;
 }

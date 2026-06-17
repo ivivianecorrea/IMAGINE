@@ -1,126 +1,155 @@
-/* MOEDAS */
-.fundo-cinza {
-    background-color: #f4f6f8;
-    margin: 0;
-    padding-bottom: 80px;
+@font-face {
+    font-family: 'roboto-thin';
+    src: url('font/Roboto-thin.ttf') format('truetype');
 }
-
-.cabecalho-moedas {
-    background: linear-gradient(135deg, #2838a3, #4a5cd0);
-    color: white;
-    text-align: center;
-    padding: 40px 20px;
-    border-bottom-left-radius: 25px;
-    border-bottom-right-radius: 25px;
-    box-shadow: 0 4px 15px rgba(40, 56, 163, 0.3);
+@font-face {
+    font-family: 'roboto-light';
+    src: url('font/Roboto-light.ttf') format('truetype');
 }
-
-.titulo-saldo {
-    font-size: 14px;
-    opacity: 0.9;
-    margin-bottom: 5px;
-    font-family: 'roboto-medium', sans-serif;
+@font-face {
+    font-family: 'roboto-medium';
+    src: url('font/Roboto-medium.ttf') format('truetype');
 }
-
-.valor-saldo {
-    font-size: 48px;
-    margin: 0;
-    font-weight: bold;
-    text-align: center;
-    font-family: 'roboto-black', sans-serif;
-    color: #fff;
+@font-face {
+    font-family: 'roboto-bold';
+    src: url('font/Roboto-bold.ttf') format('truetype');
 }
-
-.container-desafios { padding: 20px; }
-.titulo-secao { font-size: 18px; color: #09092d; margin-bottom: 15px; }
-.lista-desafios { display: flex; flex-direction: column; gap: 15px; }
-
-.card-desafio {
-    background-color: white;
-    border-radius: 12px;
-    padding: 15px;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    box-shadow: 0 2px 8px rgba(0,0,0,0.05);
-}
-
-.info-desafio h3 { font-size: 15px; color: #09092d; margin: 0 0 5px 0; }
-.info-desafio p { font-size: 12px; color: #666; margin: 0 0 10px 0; }
-
-.barra-progresso {
-    background-color: #e0e0e0;
-    border-radius: 10px;
-    height: 6px;
-    width: 100%;
-    overflow: hidden;
-}
-
-.progresso {
-    background-color: #ffaa00;
-    height: 100%;
-    border-radius: 10px;
-    transition: width 0.3s;
-}
-
-.btn-recompensa {
-    background-color: #f0f0f0;
-    border: none;
-    padding: 8px 12px;
-    border-radius: 20px;
-    font-weight: bold;
-    color: #555;
-    font-size: 13px;
-    white-space: nowrap;
-}
-
-.btn-recompensa.resgatar {
-    background-color: #ffaa00;
-    color: white;
-    cursor: pointer;
-    box-shadow: 0 2px 5px rgba(255, 170, 0, 0.4);
-    animation: pulsar 2s infinite;
-}
-
-@keyframes pulsar {
-    0% { transform: scale(1); }
-    50% { transform: scale(1.05); }
-    100% { transform: scale(1); }
+@font-face {
+    font-family: 'roboto-black';
+    src: url('font/Roboto-black.ttf') format('truetype');
 }
 
 
-
-
-/* ==========================================================================
-   BARRA DE NAVEGAÇÃO INFERIOR COLETIVA
-   ========================================================================== */
-.aba-inferior {
-    position: fixed;
-    bottom: 0;
+.menusuperior {
+    position: absolute;
+    width: 100%; 
     left: 0;
+    top: 0px;
+    height: 80px;
+    background: #051E4A;
+    border-radius: 0px 0px 254px 205px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.iconeloja {
+    margin-top: 0px;
+    margin-right: -27px;
+}
+
+.loja {
+    color: #D4C36E;
+    font-family: 'roboto-black', sans-serif;
+    font-size: 12px;
+    margin-top: 35px;
+    margin-right: 1px;
+}
+
+
+.saldototal{
+    margin-top: 100px;
     width: 100%;
-    height: 20px;
-    background-color: #09092d;
-    display: flex;
-    justify-content: space-around;
-    align-items: center;
-    z-index: 2000;
-    padding: 5px 0;
-    box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.15);
-    font-family: 'roboto-black', sans-serif;
-    color: #cccccc;
 }
-.aba-item {
+#saldototal{
+    font-family: 'roboto-light', sans-serif;
+    font-size: 14px;
+    color: #D4C36E;
+    display:flex;
+    align-items: center;
+    justify-content: center;
+    margin-right: 6px;
     display: flex;
+    justify-content: flex-end;
+}
+.menuvalor{
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+    margin-top: -30px;
+    margin-right: 20px;
+    }
+.moedatotal{
+    color: #D4C36E;
+    width: 26px;
+    height: 26px;
+}
+#valortotal{
+    font-family: 'roboto-bold', sans-serif;
+    font-size: 16px;
+    color: #D4C36E;
+}
+
+
+.secoes {
     flex-direction: column;
-    align-items: center;
-    cursor: pointer;
-    font-family: 'roboto-black', sans-serif;
-    font-size: 10px;
-    color: #5d5d6e;
-    text-decoration: none;
+    display: flex;
+    position: relative;
+    max-width: 98%;
+    margin-top: -56px;
+    margin-left: 11px;
 }
-.aba-item.ativo {
-    color: #cccccc;
-    font-weight: bold;
+.recompensas-diárias{
+    color: #FF8C70;
+    font-family: 'roboto-bold', sans-serif;
+    font-size: 16px;
+    margin-left: 11px;
+}
+#recompensasdiarias {
+    width: 100%;
+    height: 70px;
+    background: #051E4A;
+    border-radius: 20px;
+    padding: 5px;
+    margin-bottom: 10px; /* empurra a seção seguinte para baixo */
+}
+.recompensas-semanais{
+    color: #FF8C70;
+    font-family: 'roboto-bold', sans-serif;
+    font-size: 16px;
+    margin-left: 11px;
+}
+#recompensassemanais {
+    width: 100%;
+    height: 70px;
+    background: #051E4A;
+    border-radius: 20px;
+    padding: 5px;
+}
+
+
+.conteudocards{
+    align-items: center;
+}
+.titulos{
+     color: #D4C36E;
+     font-family: 'roboto-bold', sans-serif;
+     font-size: 15px;
+     margin-left: 11px;
+     margin-top: -20;
+}
+.subtitulos{
+     color: #0A5985;
+     font-family: 'roboto-light', sans-serif;
+     font-size: 12px;
+     margin-left: 11px;
+     margin-top: -10px;
+}
+.moedas{
+    color: #0A5985;
+    background: none;
+    border: none;
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+    margin-left: auto; 
+    margin-right: 4px;
+    margin-top: -47px;
+
+}
+.moedas-diarias{
+    color: #0A5985;
+}
+.moedas-semanais{
+    color: #0A5985;
 }

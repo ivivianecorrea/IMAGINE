@@ -1,40 +1,29 @@
-// 🪙 LÓGICA DO SALDO E RECOMPENSAS (Menus/moedas.js)
-// 1. Puxa o saldo salvo do navegador. Se não existir, começa com 150.
-let saldoAtual = parseInt(localStorage.getItem('saldoMoedas')) || 150;
-// Seleciona os elementos da tela
-const elementoSaldo = document.querySelector('.valor-saldo');
-const btnResgatar = document.querySelector('.btn-recompensa.resgatar');
-// 2. Atualiza a tela com o saldo correto assim que a página abre
-elementoSaldo.textContent = `🪙 ${saldoAtual}`;
-// 3. Verifica se o usuário já resgatou esse prêmio antes nesta sessão
-if (localStorage.getItem('desafioLeitorFeito') === 'true') {
-    deixarBotaoConcluido();
-}
-// 4. Configura o clique no botão de resgatar
-if (btnResgatar) {
-    btnResgatar.addEventListener('click', function() {
-        // Soma 50 moedas ao saldo
-        saldoAtual += 50;
-        
-        // Atualiza a tela e o LocalStorage
-        elementoSaldo.textContent = `🪙 ${saldoAtual}`;
-        localStorage.setItem('saldoMoedas', saldoAtual);
-        
-        // Salva que este desafio já foi feito
-        localStorage.setItem('desafioLeitorFeito', 'true');
-        
-        // Muda o visual do botão para "Concluído"
-        deixarBotaoConcluido();
+// 1. Pegar o elemento do saldo na tela
+const saldoElement = document.getElementById('valortotal');
+// 2. Pegar o saldo atual do localStorage (ou começar com 0)
+let saldo = parseInt(localStorage.getItem('valortotal')) || 0;
+
+// 3. Atualizar a tela com o saldo atual
+saldoElement.textContent = saldo;
+// 4. Selecionar TODOS os botões com a classe 'btn-resgatar'
+const botoesResgatar = document.querySelectorAll('.recompensas');
+
+// 5. Para cada botão, adicionar um "ouvinte de clique"
+botoesResgatar.forEach(botao => {
+    botao.addEventListener('click', function() {
+        // Lê o valor da recompensa (atributo data-valor)
+        const valor = parseInt(this.dataset.valor);
+        // Soma ao saldo
+        saldo = saldo + valor;
+        // Atualiza a tela
+        saldoElement.textContent = saldo;
+        // Salva no localStorage para não perder ao recarregar
+        localStorage.setItem('saldoMoedas', saldo);
+
+
+        // (Opcional) Marca o botão como resgatado para não poder clicar de novo
+        this.disabled = true;
+        this.textContent = '✅ Resgatado!';
+        this.style.Color = '#FF8C70';
     });
-}
-// Função auxiliar para mudar o estado do botão
-function deixarBotaoConcluido() {
-    if (btnResgatar) {
-        btnResgatar.textContent = "Concluído ✓";
-        btnResgatar.classList.remove('resgatar'); // Remove o pulso amarelo do CSS
-        btnResgatar.style.backgroundColor = "#e0e0e0";
-        btnResgatar.style.color = "#888";
-        btnResgatar.style.cursor = "default";
-        btnResgatar.disabled = true; // Desativa o botão para não clicar de novo
-    }
-}
+});

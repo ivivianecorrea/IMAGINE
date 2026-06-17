@@ -64,7 +64,7 @@ body {
     font-family: 'roboto-black', sans-serif;
     color: #6371c8;
     font-size: 11px;
-    margin-left: -67px;
+    margin-left: -68px;
     margin-top: 33px;
 }
 
@@ -230,15 +230,7 @@ body {
     -webkit-column-break-inside: 2;
     -webkit-box-orient:vertical;
     max-width: 150px;
-}
-.card-recente-autor{
-    font-size: 7px !important; 
-    margin: 0; 
-    color: #6e749b !important;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    max-width: 100%;
+    font-family: 'roboto-light', sans-serif;
 }
 
 .card {
@@ -283,11 +275,10 @@ body {
 .card-recente-info {
     overflow: hidden; text-align: left;
 }
-.card-recente-titulo {
-    font-size: 5px; margin: 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
-}
 .card-recente-autor {
-    font-size: 8px; margin: 3px 0 14px 0; color: #3d3d5a; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+    font-size: 8px; 
+    font-family: 'roboto-medium', sans-serif;
+    margin: 3px 0 14px 0; color: #3d3d5a; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
 }
 
 /* ==========================================================================
@@ -341,7 +332,7 @@ body {
 .cardsC {
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(130px, 1fr));
-    gap: 15px;
+    gap: 20px;
     margin-top: -0px;
     background: transparent;
     border-radius: 20px;
@@ -388,6 +379,7 @@ body {
     overflow: hidden;
     text-overflow: ellipsis;
     max-width: 150px;
+        font-family: 'roboto-extra-bold', sans-serif;
 }
 .card-principal-autor{
     font-size: 9px !important; 
@@ -397,6 +389,7 @@ body {
     overflow: hidden;
     text-overflow: ellipsis;
     max-width: 100%;
+        font-family: 'roboto-medium', sans-serif;
 }
 .menu-categorias-capa {
     position: absolute;
@@ -451,6 +444,31 @@ body {
     font-size: 7px;
 }
 
+/* Etiqueta de formato (PDF/EPUB) sobre a capa */
+.etiqueta-formato {
+    position: absolute;
+    top: 8px;
+    left: 8px;
+    color: white;
+    font-size: 10px;
+    font-weight: bold;
+    padding: 3px 8px;
+    border-radius: 4px;
+    z-index: 15;
+    font-family: 'roboto-medium', sans-serif;
+    backdrop-filter: blur(2px);
+    pointer-events: none; /* impede que a etiqueta atrapalhe os cliques nos botões da capa */
+}
+
+.etiqueta-formato.pdf {
+    background-color: #bdc4e3; /* vermelho para PDF */
+    color: #2f3b8b;
+}
+
+.etiqueta-formato.epub {
+    background-color: #bdc4e3; /* verde para EPUB */
+    color: #2f3b8b;
+}
 /* ==========================================================================
 Filtros
    ========================================================================== */
@@ -484,7 +502,6 @@ Filtros
     background-color: #bdc4e3; /* Tom azul-escuro igual à sua aba inferior */
     color: #2f3b8b;
     border-radius: 8px;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
     padding: 6px 0;
     min-width: 120px;
     z-index: 3000; /* Garante que fique acima de outros elementos na tela */
@@ -747,75 +764,75 @@ color: #bdc4e3;
 
 /* Regras aplicadas quando o body tiver a classe .dark-mode */
 body.dark-mode {
-    background-color: #0d0e19; /* Fundo escuro profundo */
+    background-color: #070A23; /* Fundo escuro profundo */
     color: #bdc4e3;
 }
 
 body.dark-mode .logo .cls-1{
-fill: #162a70;
+fill: #D4C36E;
 }
 body.dark-mode .IMAGINE {
-color:#162a70
+color:#D4C36E
 }
 body.dark-mode .Biblioteca {
-    color: #545d85;
+    color: #D4C36E;
 }
 body.dark-mode .recentes{
-color: #545d85;
+color: #D4C36E;
 }
 
 
 body.dark-mode .botaob,
 body.dark-mode .lupa,
 body.dark-mode .busca::placeholder {
-    color: #1a1c2c !important;
-    background-color: #02040d !important;
+    color: #0A5985 !important;
+    background-color: #051E4A !important;
 }
 body.dark-mode .busca {
-    color: #545d85 !important;
-    background-color: #02040d !important;
+    color: #FF8C70 !important;
+    background-color: #051E4A !important;
 }
 
 
 body.dark-mode .mais {
-    background-color: #02040d;
-    color: #162a70;
+    background-color: #D4C36E;
+    color: #051E4A;
 }
 body.dark-mode .mais:hover {
-    background-color: #162a70;
-    color: #02040d;
+    background-color: #FF8C70;
+    color: #051E4A;
 }
 body.dark-mode .opcoesmais {
-    background-color: #02040d;
-    color: #1a1c2c;
+    background-color: #D4C36E;
+    color: #051E4A;
 }
 body.dark-mode .opcoesmais:hover {
-    background-color: #02040d;
-    color: #162a70;
+    background-color: #FF8C70;
+    color: #051E4A;
 }
 
 
 body.dark-mode .categoria-item {
-    background-color: #02040d;
-    color: #1a1c2c;
+    background-color: #051E4A;
+    color: #0A5985;
 }
 body.dark-mode .categoria-item:hover {
-    background-color: #162a70 ;
-    color: #090c1b ;
+    background-color: #D4C36E ;
+    color: #051E4A ;
 }
 body.dark-mode .categoria-item.ativo {
-    background-color: #162a70 ;
-    color: #090c1b ;
+    background-color: #D4C36E ;
+    color: #051E4A ;
 }
 
 
 body.dark-mode .card-recente-titulo,
 body.dark-mode .titulo{
-color: #545d85;
+color: #FF8C70;
 }
 body.dark-mode .card-recente-autor,
 body.dark-mode .card-principal-autor{
-color: #242636 !important;
+color: #FF8C70 !important;
 }
 
 
@@ -823,94 +840,110 @@ body.dark-mode .cardsR .card,
 body.dark-mode .cardsC .card,
 body.dark-mode .card,
 body.dark-mode .menu-categorias-capa {
-    background-color: #02040d;
+    background-color: #051E4A;
+}
+
+body.dark-mode .cardsR .card:hover,
+body.dark-mode .cardsC .card:hover {
+    background-color: #031432;
 }
 body.dark-mode .btn-cat {
-border-color: #02040d;
-color: #1a1c2c;
-border-color: #1a1c2c;
+border-color: #0A5985;
+color: #0A5985;
+border-color: #0A5985;
 }
 
 body.dark-mode .modal-conteudo,
 body.dark-mode .modal-esquerda{
-    background-color: #1a1c2c;
+    background-color: #070A23;
 }
 body.dark-mode .modal-campo label,
 body.dark-mode .btn-fechar-modal,
 body.dark-mode .btn-acao-topo {
-color: #02040d;
+color: #D4C36E;
 }
 body.dark-mode .modal-campo input {
-    background-color: #02040d;
-    border-color: transparent;
-    color: #424662;
+    background-color: #051E4A;
+    border-color: none;
+    color: #FF8C70;
 }
 body.dark-mode .btn-salvar-modal {
-    background-color: #02040d;
+    background-color: #051E4A;
     color: #424662;
 }
 body.dark-mode .btn-salvar-modal:hover {
     background-color: #424662;
-    color: #02040d;
+    color: #D4C36E;
 }
 
 body.dark-mode .btn-acao-topo {
-    color: #122051;
+    color: #D4C36E;
 }
 body.dark-mode .btn-acao-topo:hover {
-    color: #545d85;
+    color: #FF8C70;
 }
 body.dark-mode .opcao-filtro {
-    color: #1a1c2c; 
+    color: #051E4A; 
 }
 body.dark-mode .opcao-filtro:hover {
-    background-color: #545d85; 
-    color: #02040d;
+    background-color: #051E4A; 
+    color: #D4C36E;
 }
 body.dark-mode .opcao-filtro.ativa {
-    color: #02040d; 
-    background-color: #545d85;
+    color: #D4C36E; 
+    background-color: #051E4A;
 }
 body.dark-mode .balao-filtro {
-background-color: #02040d;
+background-color: #D4C36E;
 }
 
 
 body.dark-mode .btn-selecionar-tudo {
-    background-color: #02040d;
-    color: #162a70;
+    background-color: #051E4A;
+    color: #D4C36E;
 }
 body.dark-mode .btn-selecionar-tudo:hover {
-    background-color: #162a70;
-    color: #02040d;
+    background-color: #D4C36E;
+    color: #051E4A;
 }
 body.dark-mode .btn-deletar-secao { 
-    background-color: #02040d;
-    color: #c62222;
+    background-color: #c62222;
+    color: #D4C36E;
 }
 body.dark-mode .btn-deletar-secao:hover {
-background-color: #c62222;
-color: #02040d;
+background-color: #D4C36E;
+color: #c62222;
 }
 
 
 body.dark-mode .aba-inferior {
-background-color: #02040d !important;
+background-color: #070A23 !important;
 }
 body.dark-mode .aba-item {
-color: #1a1c2c !important;
+color: #0A5985 !important;
 }
 body.dark-mode .aba-item:hover{
-    color: #162a70 !important;
+    color: #D4C36E !important;
 }
 body.dark-mode .aba-item.ativo {
-    color: #162a70 !important;
+    color: #D4C36E !important;
 }
 
 
 body.dark-mode .btn-tema{
-    color: #1e2e6a;
+    color: #D4C36E;
 }
 body.dark-mode .btn-tema:hover{
-    color: #545d85;
+    color: #FF8C70;
+}
+
+
+body.dark-mode .etiqueta-formato.pdf {
+    background-color: #051E4A; /* vermelho para PDF */
+    color: #0A5985;
+}
+
+body.dark-mode .etiqueta-formato.epub {
+    background-color: #051E4A; /* verde para EPUB */
+    color: #0A5985;
 }

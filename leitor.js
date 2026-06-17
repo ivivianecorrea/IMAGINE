@@ -3,7 +3,8 @@ let isPDF = false;
 let pdfDoc = null;
 let pdfPagesData = [];
 let totalPages = 0;
-
+let menusVisiveis = true;
+let primeiraVez = true;
 let preferencias = {
     bgCor: "#f2e9c8",
     textoCor: "#1c2351",
@@ -96,7 +97,6 @@ async function renderPDFAllPages() {
         canvas.height = scaledViewport.height;
         canvas.width = scaledViewport.width;
         canvas.style.display = "block";
-        canvas.style.margin = "0 auto 20px auto";
         canvas.className = "pdf-page";
         const context = canvas.getContext("2d");
         await page.render({ canvasContext: context, viewport: scaledViewport }).promise;
@@ -108,6 +108,8 @@ async function renderPDFAllPages() {
         });
         pagesHeight += canvas.height + 20;
     }
+    // Aguarda o próximo frame para garantir layout calculado
+    await new Promise(resolve => requestAnimationFrame(resolve));
     container.addEventListener("scroll", atualizarProgressoPorScroll);
     configurarBarraProgresso();
     atualizarProgressoPorScroll();
@@ -134,19 +136,24 @@ function atualizarProgressoPorScroll() {
     if (!slider) return;
 
     const container = document.getElementById("conteudo-livro");
+    if (!container) return;
     const scrollTop = container.scrollTop;
     const scrollHeight = container.scrollHeight - container.clientHeight;
     const progresso = scrollHeight > 0 ? scrollTop / scrollHeight : 0;
     slider.value = progresso * 100;
     tooltip.innerText = Math.round(progresso * 100) + "%";
 
-    if (isPDF && pdfPagesData.length) {
+    if (isPDF && pdfPagesData && pdfPagesData.length > 0) {
         let pagina = 1;
         for (let i = 0; i < pdfPagesData.length; i++) {
             if (scrollTop >= pdfPagesData[i].top - 50) {
                 pagina = pdfPagesData[i].pageNum;
-            } else break;
+            } else {
+                break;
+            }
         }
+        if (pagina < 1) pagina = 1;
+        if (pagina > totalPages) pagina = totalPages;
         spanAtual.innerText = pagina;
         spanTotal.innerText = totalPages;
     } else {
@@ -169,6 +176,7 @@ function iniciarEPUB(blob) {
         });
         currentRendition = rendition;
         rendition.display().then(() => {
+            // Tenta injetar CSS e configurar barra de progresso
             const checkInterval = setInterval(() => {
                 const iframe = document.querySelector("#conteudo-livro iframe");
                 if (iframe && iframe.contentDocument) {
@@ -206,6 +214,10 @@ function carregarSumarioEpub(book) {
                     e.stopPropagation();
                     if (item.href) {
                         currentRendition.display(item.href).catch(console.warn);
+                        setTimeout(() => {
+                            const container = document.getElementById("conteudo-livro");
+                            if (container) container.scrollTop = 0;
+                        }, 100);
                         document.getElementById("sidebar-sumario")?.classList.remove("aberta");
                     }
                 });
@@ -232,22 +244,42 @@ async function extrairSumarioPDF(blob) {
             lista.innerHTML = "<li>Nenhum índice encontrado neste PDF.</li>";
             return;
         }
+        
+        async function getPageNumberFromDest(dest) {
+            if (!dest) return null;
+            if (typeof dest === 'number') return dest;
+            try {
+                const destRef = Array.isArray(dest) ? dest[0] : dest;
+                const pageIndex = await pdf.getPageIndex(destRef);
+                return pageIndex + 1;
+            } catch(e) {
+                if (Array.isArray(dest) && typeof dest[0] === 'number') return dest[0];
+                console.warn("Não foi possível resolver destino", dest);
+                return null;
+            }
+        }
+        
         function adicionarItensPDF(itens, nivel = 0) {
             itens.forEach(item => {
                 const li = document.createElement("li");
                 li.textContent = item.title;
                 li.style.paddingLeft = (nivel * 16) + 16 + "px";
                 li.style.cursor = "pointer";
-                li.title = `Ir para página ${item.dest ? item.dest[0] : '?'}`;
-                li.addEventListener("click", () => {
-                    if (item.dest && item.dest[0] && pdfPagesData[item.dest[0] - 1]) {
-                        const container = document.getElementById("conteudo-livro");
-                        container.scrollTo({
-                            top: pdfPagesData[item.dest[0] - 1].top,
-                            behavior: "smooth"
-                        });
+                li.title = `Ir para página ${item.dest ? (Array.isArray(item.dest) ? item.dest[0] : item.dest) : '?'}`;
+                li.addEventListener("click", async () => {
+                    if (item.dest) {
+                        const pageNum = await getPageNumberFromDest(item.dest);
+                        if (pageNum && pdfPagesData[pageNum - 1]) {
+                            const container = document.getElementById("conteudo-livro");
+                            container.scrollTo({
+                                top: pdfPagesData[pageNum - 1].top,
+                                behavior: "smooth"
+                            });
+                        } else {
+                            alert(`Não foi possível ir para a página ${pageNum || 'destino'}.`);
+                        }
                     } else {
-                        alert("Destino não encontrado.");
+                        alert("Destino não encontrado para este item.");
                     }
                     document.getElementById("sidebar-sumario")?.classList.remove("aberta");
                 });
@@ -268,12 +300,14 @@ function inicializarPersonalizacao() {
     const btnFecharPers = document.getElementById("fechar-personalizacao");
     const sidebarSumario = document.getElementById("sidebar-sumario");
 
-    function abrirPersonalizacao() {
-        sidebar.classList.add("aberta");
-        if (sidebarSumario.classList.contains("aberta")) sidebarSumario.classList.remove("aberta");
+    function togglePersonalizacao() {
+        sidebar.classList.toggle("aberta");
+        if (sidebar.classList.contains("aberta") && sidebarSumario.classList.contains("aberta")) {
+            sidebarSumario.classList.remove("aberta");
+        }
     }
     function fecharPersonalizacao() { sidebar.classList.remove("aberta"); }
-    if (btnPersonalizar) btnPersonalizar.addEventListener("click", abrirPersonalizacao);
+    if (btnPersonalizar) btnPersonalizar.addEventListener("click", togglePersonalizacao);
     if (btnFecharPers) btnFecharPers.addEventListener("click", fecharPersonalizacao);
     document.addEventListener("click", (e) => {
         if (sidebar.classList.contains("aberta") && !sidebar.contains(e.target) && e.target !== btnPersonalizar && !btnPersonalizar.contains(e.target))
@@ -416,9 +450,9 @@ function executarLeitor() {
                 pdfDoc = await pdfjsLib.getDocument({ data: arrayBuffer }).promise;
                 totalPages = pdfDoc.numPages;
                 document.getElementById("pagina-total").innerText = totalPages;
+                extrairSumarioPDF(blob);
                 await renderPDFAllPages();
                 aplicarPreferencias();
-                extrairSumarioPDF(blob);
                 return;
             }
 
@@ -461,3 +495,48 @@ if (document.readyState === "loading") {
 } else {
     executarLeitor();
 }
+
+// ========== MOSTRAR/OCULTAR MENUS AO CLICAR NO CENTRO ==========
+window.addEventListener('load', function() {
+    const areaConteudo = document.getElementById('conteudo-livro');
+    const dicaElement = document.getElementById('dica-clique');
+    
+    if (!areaConteudo) return;
+    
+    let menusVisiveis = true;
+    
+    function toggleMenus() {
+        const body = document.body;
+        if (menusVisiveis) {
+            body.classList.add('menu-oculto');
+            menusVisiveis = false;
+        } else {
+            body.classList.remove('menu-oculto');
+            menusVisiveis = true;
+        }
+    }
+    
+    const jaMostrouDica = localStorage.getItem('leitor_mostrou_dica');
+    if (!jaMostrouDica && dicaElement) {
+        dicaElement.style.display = 'flex';
+        localStorage.setItem('leitor_mostrou_dica', 'true');
+        dicaElement.addEventListener('click', () => {
+            dicaElement.style.display = 'none';
+            toggleMenus();
+        });
+    } else {
+        if (dicaElement) dicaElement.style.display = 'none';
+    }
+    
+    areaConteudo.addEventListener('click', (e) => {
+        if (dicaElement && dicaElement.style.display === 'flex') return;
+        toggleMenus();
+    });
+    
+    const elementosQueNaoOcultam = document.querySelectorAll('.barra-topo, .footer-leitor, .sidebar-sumario, .sidebar-personalizacao, .btn-voltar, .btn-sumario, .btn-personalizar, .fechar-sumario, .fechar-personalizacao');
+    elementosQueNaoOcultam.forEach(el => {
+        el.addEventListener('click', (e) => {
+            e.stopPropagation();
+        });
+    });
+});
