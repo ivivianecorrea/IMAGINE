@@ -128,6 +128,19 @@
     border-radius: 20px;
     margin-bottom: 20px;
 }
+.recompensas-anuais{
+    color: #FF8C70;
+    font-family: 'roboto-bold', sans-serif;
+    font-size: 16px;
+    margin-left: 11px;
+}
+#recompensasanuais {
+    width: 100%;
+    height: 70px;
+    background: #051E4A;
+    border-radius: 20px;
+    margin-bottom: 20px;
+}
 .histórico{
     color: #FF8C70;
     font-family: 'roboto-bold', sans-serif;
