@@ -100,8 +100,7 @@
     height: 70px;
     background: #051E4A;
     border-radius: 20px;
-    padding: 5px;
-    margin-bottom: 10px; /* empurra a seção seguinte para baixo */
+    margin-bottom: 20px; /* empurra a seção seguinte para baixo */
 }
 .recompensas-semanais{
     color: #FF8C70;
@@ -114,12 +113,53 @@
     height: 70px;
     background: #051E4A;
     border-radius: 20px;
-    padding: 5px;
+    margin-bottom: 20px;
+}
+.recompensas-mensais{
+    color: #FF8C70;
+    font-family: 'roboto-bold', sans-serif;
+    font-size: 16px;
+    margin-left: 11px;
+}
+#recompensasmensais {
+    width: 100%;
+    height: 70px;
+    background: #051E4A;
+    border-radius: 20px;
+    margin-bottom: 20px;
+}
+.histórico{
+    color: #FF8C70;
+    font-family: 'roboto-bold', sans-serif;
+    font-size: 16px;
+    margin-left: 11px;
+}
+#históricomenu{
+    width: 100%;
+    height: 70px;
+    background: #051E4A;
+    border-radius: 20px;
+    margin-bottom: 20px;
+    align-items: center;
+    justify-content: center;
+    display: flex;
+    
+}
+.conteudocards-histórico{
+    color: #0A5985;
+    font-family: 'roboto-light', sans-serif;
+    font-size: 12px;
 }
 
 
 .conteudocards{
     align-items: center;
+    width: 100%;
+    height: 70px;
+    background: #051E4A;
+    border-radius: 20px;
+    padding: 5px;
+    margin-bottom: 10px;
 }
 .titulos{
      color: #D4C36E;
@@ -144,8 +184,7 @@
     align-items: center;
     margin-left: auto; 
     margin-right: 4px;
-    margin-top: -47px;
-
+    margin-top: -64px;
 }
 .moedas-diarias{
     color: #0A5985;
