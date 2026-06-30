@@ -59,7 +59,6 @@
     align-items: center;
     justify-content: center;
     margin-right: 6px;
-    display: flex;
     justify-content: flex-end;
 }
 .menuvalor{
@@ -87,16 +86,38 @@
     position: relative;
     max-width: 98%;
     margin-top: -56px;
+}
+.resgatar{
+    color: #FF8C70;
+    font-family: 'roboto-bold', sans-serif;
+    font-size: 16px;
     margin-left: 11px;
+    margin-top: 20px;
+}
+#resgatarmenu{
+    width: 102%;
+    height: 70px;
+    background: #051E4A;
+    border-radius: 20px;
+    margin-bottom: 20px;
+    align-items: center;
+    justify-content: center;
+    display: flex;
+}
+.conteudocards-resgatar{
+    color: #0A5985;
+    font-family: 'roboto-light', sans-serif;
+    font-size: 12px;
 }
 .recompensas-diárias{
     color: #FF8C70;
     font-family: 'roboto-bold', sans-serif;
     font-size: 16px;
     margin-left: 11px;
+    margin-top: -6px;
 }
 #recompensasdiarias {
-    width: 100%;
+    width: 99%;
     height: 70px;
     background: #051E4A;
     border-radius: 20px;
@@ -109,7 +130,7 @@
     margin-left: 11px;
 }
 #recompensassemanais {
-    width: 100%;
+    width: 99%;
     height: 70px;
     background: #051E4A;
     border-radius: 20px;
@@ -122,7 +143,7 @@
     margin-left: 11px;
 }
 #recompensasmensais {
-    width: 100%;
+    width: 99%;
     height: 70px;
     background: #051E4A;
     border-radius: 20px;
@@ -133,9 +154,10 @@
     font-family: 'roboto-bold', sans-serif;
     font-size: 16px;
     margin-left: 11px;
+    
 }
 #recompensasanuais {
-    width: 100%;
+    width: 99%;
     height: 70px;
     background: #051E4A;
     border-radius: 20px;
@@ -204,4 +226,10 @@
 }
 .moedas-semanais{
     color: #0A5985;
+}
+
+.conteudocards:hover,
+.conteudocards:hover .titulos{
+background-color: #031432;
+color: #FF8C70;
 }

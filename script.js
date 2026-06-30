@@ -723,3 +723,112 @@ if (btnTema) {
         }
     });
 }
+
+// ==========================================================================
+// INTEGRAÇÃO COM SISTEMA DE MOEDAS
+// ==========================================================================
+
+// Função auxiliar para verificar se uma ação ocorreu hoje
+function hoje() {
+    return new Date().toDateString();
+}
+
+// Notificar quando um livro é adicionado (Rato de Biblioteca)
+// Já existe a função adicionarLivroPorArquivo, modifique para chamar marcarRecompensaConcluida
+// Vamos sobrescrever ou adicionar um hook após adicionar.
+// No código existente, após a inserção do livro, chamamos salvarDados() e renderizarBiblioteca().
+// Podemos adicionar uma chamada logo após.
+// Vamos criar uma função que será chamada após adicionar um livro.
+function notificarAdicaoLivro() {
+    if (window.marcarRecompensaConcluida) {
+        window.marcarRecompensaConcluida('rato-biblioteca');
+    }
+}
+
+// Notificar quando uma categoria é alterada (Organizado!)
+// A alteração de categoria ocorre nos botões .btn-cat dentro de cada card.
+// No evento de clique, após alterar a categoria, chamamos notificarCategoriaAlterada.
+function notificarCategoriaAlterada() {
+    if (window.marcarRecompensaConcluida) {
+        window.marcarRecompensaConcluida('organizado');
+    }
+}
+
+// Notificar quando um livro é finalizado (Leitor(a))
+// Quando a categoria é alterada para 'finalizados', chamamos notificarLivroFinalizado.
+function notificarLivroFinalizado() {
+    if (window.marcarRecompensaConcluida) {
+        window.marcarRecompensaConcluida('leitor');
+    }
+}
+
+// Notificar login diário (ao carregar a página)
+function notificarLoginDiario() {
+    const hoje = new Date().toDateString();
+    const ultimoLogin = localStorage.getItem('ultimo_login_diario');
+    if (ultimoLogin !== hoje) {
+        localStorage.setItem('ultimo_login_diario', hoje);
+        if (window.marcarRecompensaConcluida) {
+            window.marcarRecompensaConcluida('login-diario');
+        }
+    }
+}
+
+// Chamar no carregamento da página
+notificarLoginDiario();
+
+// Modificar o evento de clique dos botões de categoria para chamar notificações
+// Como o código já está estruturado, vamos adicionar um listener global para capturar mudanças de categoria.
+document.addEventListener('click', function(e) {
+    const btn = e.target.closest('.btn-cat');
+    if (btn) {
+        // A categoria é alterada quando o usuário clica no botão
+        // Precisamos verificar se a nova categoria é 'finalizados' para notificar
+        const cat = btn.dataset.cat;
+        // A lógica de alteração está no script, mas podemos notificar após um pequeno delay
+        setTimeout(() => {
+            // Verificar se algum livro foi marcado como finalizados
+            // Podemos checar o estado atual dos livros
+            const livros = JSON.parse(localStorage.getItem('minhaBiblioteca')) || [];
+            const algumFinalizado = livros.some(l => l.categoria === 'finalizados');
+            if (algumFinalizado) {
+                notificarLivroFinalizado();
+            }
+            // Para a recompensa "Organizado!", qualquer mudança de categoria conta
+            notificarCategoriaAlterada();
+        }, 100);
+    }
+});
+
+// Modificar a função adicionarLivroPorArquivo para notificar após adicionar
+// Vamos fazer um monkey-patch da função original se ela existir.
+// Como o script é carregado depois, podemos sobrescrever a função.
+if (typeof adicionarLivroPorArquivo === 'function') {
+    const originalAdicionar = adicionarLivroPorArquivo;
+    adicionarLivroPorArquivo = async function(arquivo, idUnico) {
+        const resultado = await originalAdicionar(arquivo, idUnico);
+        if (resultado) {
+            notificarAdicaoLivro();
+        }
+        return resultado;
+    };
+} else {
+    // Se a função não estiver definida (por ordem de carregamento), podemos esperar
+    console.warn('adicionarLivroPorArquivo não encontrada, a notificação de adição pode não funcionar.');
+}
+
+// Também notificar quando o usuário adiciona via pasta (escanear)
+// O evento inputPasta também pode ser modificado.
+const inputPastaOriginal = document.getElementById('input-pasta');
+if (inputPastaOriginal) {
+    inputPastaOriginal.addEventListener('change', function(e) {
+        // Após adicionar os livros, notificar
+        // Como a adição é assíncrona, precisamos esperar o processamento.
+        // Vamos usar um MutationObserver ou simplesmente notificar após um tempo.
+        // Melhor: modificar o loop de adição para chamar notificar após cada livro.
+        // Como não temos controle direto, podemos notificar após o evento.
+        setTimeout(() => {
+            notificarAdicaoLivro();
+        }, 2000);
+    });
+}

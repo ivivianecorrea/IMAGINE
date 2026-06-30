@@ -1,9 +1,8 @@
 /* ========== DESAFIOS ========== */
 .container-desafios {
     padding: 20px;
-    max-width: 800px;
-    margin: 0 auto;
-    font-family: 'roboto-medium', sans-serif;
+    max-height: 99%;
+    font-family: 'roboto-light', sans-serif;
 }
 .cabecalho-desafios {
     display: flex;
@@ -17,7 +16,6 @@
 .titulo-principal {
     font-size: 24px;
     color: #2f3b8b;
-    margin-left: 9px;
     font-family: 'roboto-bold', sans-serif;
 }
 
@@ -31,44 +29,40 @@
     cursor: pointer;
     font-family: 'roboto-medium', sans-serif;
     transition: background-color 0.2s, transform 0.1s;
-    margin-right: -130px;
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
 }
 .btn-adicionar:hover {
     background-color: #4a5cd0;
     transform: scale(1.02);
 }
 
-
-.secao-desafio {
-    background: none;
-    align-items: center;
-    justify-content: center;
-    border-radius: 16px;
-    padding: 10px;
-    margin-bottom: 25px;
-}
 .secao-desafio h2 {
     font-size: 16px;
     color: #2f3b8b;
-    margin-top: -9px;
+    margin-top: 13px;
     font-family: 'roboto-bold', sans-serif;
 }
-
 .card-desafio {
-    background: #f9f9fb;
+    background: #051E4A;
     border-radius: 14px;
-    padding: 10px;
+    padding: 16px 20px;
     transition: background 0.2s;
-    display: flex;
-    align-items: center;
     border: none;
-    position: center;
-    width: 900px;
-
+    max-width: 100%;
+    box-sizing: border-box;
+    color: #D4C36E;
+    margin: 0;
+    display: flex !important;
+    flex-direction: column !important;
+    gap: 20px !important; /* aumenta o espaçamento entre os cards */
+    align-items: stretch !important;
 }
 .card-desafio p {
-    margin: 8px 0;
+    margin: 6px 0;
     font-size: 14px;
+    text-align: left;           /* texto alinhado à esquerda */
 }
 .card-desafio strong {
     color: #2838a3;
@@ -107,9 +101,30 @@
     flex-direction: column;
     gap: 12px;
 }
-.sem-desafio, .sem-historico {
-    color: #888;
-    font-style: italic;
+.status-emprogresso {
+    background-color: #ffaa00;
+    color: #1a1c2c;
+}
+
+/* --- Mensagens quando vazio --- */
+.sem-desafio,
+.sem-historico {
+    color: #0A5985;
+    font-family: 'roboto-light', sans-serif;
+    font-size: 13px;
+    justify-items: center;
+    align-items: center;
+    width: 100%;
+    height: 10px;
+    border-radius: 20px;
+}
+.sem-historico {
+    color: #0A5985; /* ou a cor que desejar */
+    font-family: 'roboto-light', sans-serif;
+    margin: 0;
+    padding: 20px 0;
+    text-align: center;
+    width: 100%;
 }
 .simulacao-tempo {
     text-align: center;
@@ -128,6 +143,36 @@
     background-color: #ffaa00;
        margin-left: 10px;
     color: #1a1c2c;
+}
+/* --- Botão excluir dentro do card --- */
+.btn-excluir {
+    background: none;
+    border: none;
+    font-size: 18px;
+    cursor: pointer;
+    color: #c62222;
+    padding: 4px 8px;
+    border-radius: 6px;
+    transition: background-color 0.2s, transform 0.2s;
+    flex-shrink: 0;        /* evita que o botão encolha */
+}
+.btn-excluir:hover {
+    background-color: rgba(198, 34, 34, 0.2);
+    transform: scale(1.1);
+}
+.btn-esvaziar-historico {
+    background-color: #c62222;
+    color: white;
+    border: none;
+    padding: 8px 16px;
+    border-radius: 20px;
+    cursor: pointer;
+    font-family: 'roboto-medium', sans-serif;
+    font-size: 13px;
+    transition: background-color 0.2s;
+}
+.btn-esvaziar-historico:hover {
+    background-color: #9b1d0f;
 }
 
 
@@ -219,6 +264,7 @@
     margin-top: -10px;
     margin-left: 25px;
 }
+
 
 
 /* ==========================================================================
@@ -403,3 +449,9 @@ body.dark-mode .sem-historico {
     color: #0A5985;
 }
 
+
+body.dark-mode .sem-desafio,
+body.dark-mode .sem-historico {
+    color: #0A5985;
+    background-color: #051E4A;
+}

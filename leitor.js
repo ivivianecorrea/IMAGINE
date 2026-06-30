@@ -540,3 +540,36 @@ window.addEventListener('load', function() {
         });
     });
 });
+
+// ==========================================================================
+// NOTIFICAR LEITURA DE LIVRO (Leitor Assíduo)
+// ==========================================================================
+function notificarLeituraLivro() {
+    if (window.marcarRecompensaConcluida) {
+        // Verifica se já foi notificado hoje para este livro? Podemos permitir apenas uma vez por dia.
+        const hoje = new Date().toDateString();
+        const ultimaLeitura = localStorage.getItem('ultima_leitura_diaria');
+        if (ultimaLeitura !== hoje) {
+            localStorage.setItem('ultima_leitura_diaria', hoje);
+            window.marcarRecompensaConcluida('leitor-assiduo');
+        }
+    }
+}
+
+// Chamar quando o livro for carregado (após a exibição)
+// No executarLeitor, após iniciar o leitor, chamar a notificação.
+// Vamos modificar a função executarLeitor existente.
+// Como o script é carregado depois, podemos fazer um override.
+if (typeof executarLeitor === 'function') {
+    const originalExecutar = executarLeitor;
+    executarLeitor = function() {
+        originalExecutar();
+        // Após o carregamento, notificar leitura
+        // Usamos um setTimeout para garantir que o conteúdo foi carregado
+        setTimeout(() => {
+            notificarLeituraLivro();
+        }, 3000);
+    };
+} else {
+    console.warn('executarLeitor não encontrada, a notificação de leitura pode não funcionar.');
+}

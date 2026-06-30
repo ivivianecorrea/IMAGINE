@@ -69,58 +69,20 @@
     color: #888888;
     font-weight: 500;
 }
-
-.painel-desafio {
-    background-color: white;
-    padding: 20px;
-    border-radius: 12px;
-    box-shadow: 0 2px 8px rgba(0,0,0,0.04);
-    font-family: 'roboto-medium', sans-serif;
-}
-
-.titulo-desafio {
-    font-family: 'roboto-black', sans-serif;
-    color: #09092d;
-    font-size: 15px;
-    margin: 0 0 10px 0;
-}
-
-.descricao-desafio {
-    font-size: 13px;
-    color: #444444;
-    margin: 0 0 15px 0;
-}
-
-.progresso-desafio-fundo {
-    height: 10px;
-    background-color: #eeeeee;
-    border-radius: 5px;
-    overflow: hidden;
-    margin-bottom: 8px;
-}
-
-.progresso-desafio-barra {
-    height: 100%;
-    background-color: #e67e22;
-    border-radius: 5px;
-}
-
-.porcentagem-desafio {
-    font-size: 11px;
-    color: #777777;
-    font-weight: bold;
-}
-
-.lista-opcoes-perfil {
+/* ==========================================================================
+   CATEGORIAS
+   ========================================================================== */
+.lista-opcoes-perfil{
     display: flex;
     flex-direction: column;
-    gap: 10px;
-    margin-top: 10px;
+    gap: 10px; /* ajuste o valor para o espaçamento desejado (ex: 16px) */
+    margin-bottom: 10px; /* se quiser manter a margem inferior */
+    align-items: center;
+  
 }
-
-.item-opcao {
+.mp-e-fa{
     display: flex;
-    justify-content: space-between;
+    justify-content: center;
     align-items: center;
     background-color: white;
     padding: 16px;
@@ -129,18 +91,63 @@
     color: #09092d;
     font-family: 'roboto-medium', sans-serif;
     font-size: 14px;
-    box-shadow: 0 2px 8px rgba(0,0,0,0.04);
     transition: background-color 0.2s ease, transform 0.1s ease;
+    width: 98%;
+}
+.m-e-c{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-color: white;
+    padding: 16px;
+    border-radius: 12px;
+    text-decoration: none;
+    color: #09092d;
+    font-family: 'roboto-medium', sans-serif;
+    font-size: 14px;
+    transition: background-color 0.2s ease, transform 0.1s ease;
+    width: 98%;
+}
+.lixeira {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-color: white;
+    padding: 16px;
+    border-radius: 12px;
+    text-decoration: none;
+    color: #09092d;
+    font-family: 'roboto-medium', sans-serif;
+    font-size: 14px;
+    transition: background-color 0.2s ease, transform 0.1s ease;
+    width: 98%;
+}
+.assinaturapremium{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-color: white;
+    padding: 16px;
+    border-radius: 12px;
+    text-decoration: none;
+    color: #09092d;
+    font-family: 'roboto-medium', sans-serif;
+    font-size: 14px;
+    transition: background-color 0.2s ease, transform 0.1s ease;
+    width: 98%;
 }
 
-.item-opcao:hover { background-color: #f5f5f5; }
-.item-opcao:active { transform: scale(0.98); }
-.opcao-esquerda { display: flex; align-items: center; gap: 12px; }
-.icone-opcao { font-size: 18px; }
-.seta-opcao { color: #2838a3; font-size: 14px; }
-
-
-
+.mp-e-fa:hover,
+.m-e-c:hover,
+.lixeira:hover,
+.assinaturapremium:hover{
+    background-color: #f5f5f5;
+}
+.opcao-esquerda {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
 
 /* ==========================================================================
    BARRA DE NAVEGAÇÃO INFERIOR COLETIVA
@@ -176,3 +183,53 @@
     font-weight: bold;
 }
 
+/* ==========================================================================
+   DARK MODE
+   ========================================================================== */
+body.dark-mode .secao-perfil {
+    background-color: #070A23;
+}
+
+body.dark-mode .cabecalho-perfil {
+    background-color: #051E4A;
+}
+
+body.dark-mode .avatar-usuario {
+    background-color: #070A23;
+}
+
+
+body.dark-mode .nome-usuario {
+    color: #FF8C70;
+}
+
+body.dark-mode .nivel-usuario {
+    color: #D4C36E;
+}
+
+
+body.dark-mode .card-estatistica {
+    background-color: #051E4A
+}
+body.dark-mode .num-estatistica {
+    color: #D4C36E;
+}
+body.dark-mode .rotulo-estatistica {
+    color: #FF8C70;
+}
+
+
+body.dark-mode .mp-e-fa,
+body.dark-mode .m-e-c,
+body.dark-mode .lixeira,
+body.dark-mode .assinaturapremium{
+    background-color: #051E4A;
+    color: #D4C36E;
+}
+body.dark-mode .mp-e-fa:hover,
+body.dark-mode .m-e-c:hover,
+body.dark-mode .lixeira:hover,
+body.dark-mode .assinaturapremium:hover {
+    background-color: #031432;
+    color: #FF8C70;
+}
